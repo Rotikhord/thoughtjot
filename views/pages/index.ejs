@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <title>ThoughtJot Sign in Page</title>
+  <script>
+  </script>
+</head>
+<body>
+<header>
+    <% include ../partials/header %>
+</header>
+  <form action="/authenticate" method="post">
+    <fieldset>
+      <legend>Please sign in:</legend><br />
+      <label for="username">Username or Email:</label> <br />
+      <input type="text" name="username"> <br /> <br />
+      <label for="password">Password</label> <br />
+      <input type="password" name="password"> <br /> <br />
+      
+    </fieldset>
+    <br />
+    <div id="formButtons">
+      <input type="submit" value="View Expected Rate">
+      <input type="reset" value="Reset Form. ">
+    </div>
+  </form>
+  <div>
+   <fieldset>
+      <legend>Rate Info:</legend>
+	  <br />
+	  <h3> <%= "message" %>
+	  <br />
+    </fieldset>
+
+  </div>
+</body>
+</html>
