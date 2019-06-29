@@ -15,8 +15,12 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 // CONTROL
-app.get('/test', function(req, res) {
-  res.render('pages/index');
+//TODO prevent signed in users from accessing login or sign-up page.
+app.get('/login', function(req, res) {
+  res.render('pages/login');
+});
+app.get('/signup', function(req, res) {
+  res.render('pages/signup');
 });
 app.get('/rate', returnRate);
 app.get('/math_service', returnJSON);

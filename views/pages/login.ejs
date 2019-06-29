@@ -18,22 +18,13 @@
       <input type="text" name="username"> <br /> <br />
       <label for="password">Password</label> <br />
       <input type="password" name="password"> <br /> <br />
-      
+      <div id="formButtons">
+        <input type="submit" value="Login">
+        <input type="reset" value="Cancel">
+      </div> 
     </fieldset>
-    <br />
-    <div id="formButtons">
-      <input type="submit" value="View Expected Rate">
-      <input type="reset" value="Reset Form. ">
-    </div>
+    <br />   
+    <p>Don't have an account? <a href="/signup">Sign up here!</a></p>
   </form>
-  <div>
-   <fieldset>
-      <legend>Rate Info:</legend>
-	  <br />
-	  <h3> <%= "message" %>
-	  <br />
-    </fieldset>
-
-  </div>
 </body>
 </html>

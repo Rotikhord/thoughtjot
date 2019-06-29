@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <title>ThoughtJot Sign Up Page</title>
+  <script>
+  </script>
+</head>
+<body>
+<header>
+    <% include ../partials/header %>
+</header>
+  <h3>Sign up for ThoughtJot</h3>
+  <form action="/createAccount" method="post">
+    <fieldset>
+      <legend>Enter your information:</legend><br />
+
+      <label for="username">Username</label> <br />
+      <input type="text" name="username"> <br /> <br />
+
+      <label for="email">Email</label> <br />
+      <input type="email" name="email"> <br /> <br />
+
+      <label for="fname">First Name</label> <br />
+      <input type="text" name="fname"> <br /> <br />
+
+      <label for="lname">Last Name</label> <br />
+      <input type="text" name="lname"> <br /> <br />
+
+      <label for="password">Password</label> <br />
+      <input type="password" name="password"> <br /> <br />
+
+      <label for="question">Recovery Question</label> <br />
+      <input type="text" name="question"> <br /> <br />
+
+      <label for="answer">Recover Answer</label> <br />
+      <input type="text" name="answer"> <br /> <br />
+
+      <div id="formButtons">
+        <input type="submit" value="Sign Up">
+        <input type="reset" value="Cancel">
+      </div> 
+    </fieldset>
+    <br />   
+    <p>Already have an account? <a href="/login">Login here!</a></p>
+  </form>
+</body>
+</html>
