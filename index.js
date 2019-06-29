@@ -1,7 +1,7 @@
 // JavaScript source code
 // variable preparation
 var express = require('express');
-var bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 var app = express();
 var port = process.env.PORT || 5000;
 
