@@ -1,0 +1,24 @@
+{
+  "name": "thoughtjot",
+  "version": "1.0.0",
+  "description": "A simple journaling application.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rotikhord/thoughtjot.git"
+  },
+  "author": "Doug Barlow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rotikhord/thoughtjot/issues"
+  },
+  "homepage": "https://github.com/Rotikhord/thoughtjot#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "express": "^4.17.1"
+  }
+}
