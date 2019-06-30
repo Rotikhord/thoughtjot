@@ -19,9 +19,12 @@
   "homepage": "https://github.com/Rotikhord/thoughtjot#readme",
   "dependencies": {
     "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.0.0",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
+    "pg": "^7.11.0",
     "uuid": "^3.3.2"
   }
 }
