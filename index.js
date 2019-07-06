@@ -247,7 +247,9 @@ function getHome(request, response){
   if (request.session.user == undefined || request.session.user == null){
     response.redirect('/login');
   } else {
-    var params = { message: "Welcome " + request.session.user.fname + "!"};    
+    //Temp tags
+    var tags = ['Faith', 'Hope', 'Charity']
+    var params = { message: "Welcome " + request.session.user.fname + "!", tags: tags};    
     response.render('pages/home', params);
   }
   

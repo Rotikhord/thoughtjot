@@ -1,0 +1,24 @@
+<!-- views/partials/header.ejs -->
+<div>
+    <div id='jotDiv'>
+        <label>Jot your thoughts!</label><br>
+        <textarea id='jotArea' oninput='enableAutoSave()'></textarea>
+    </div>
+    <div id='tagDiv'>
+        <input type='text' list='jotTags' placeholder='Add a tag/keyword'>
+            <datalist id="jotTags">
+                <% for (var i = 0; i < tags.length; i++) { %>
+                <option> <%= tags[i] %> </option>
+                <% } %>
+            </datalist>
+            <button id='btnAddTag' onclick='addTag()'>+</button>
+            <select id='removeTag'>
+                <option selected disabled hidden>Remove tags</option>
+            </select>
+            <button id='btnRemoveTag' onclick='removeTag()'>-</button>
+        </div>
+        <div id='saveDiv'>
+            <button id='btnSaveJot' onclick='saveJot()'>Save</button>
+            <button id='btnClearJot' onclick='clearJot()'>Clear</button>
+    </div>
+</div>

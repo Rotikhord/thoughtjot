@@ -9,12 +9,13 @@
 </head>
 <body>
 <header>
-    <% include ../partials/header %>
+     <h1>Welcome to ThoughtJot!</h1>
 </header>
   <h3>Sign up for ThoughtJot</h3>
   <form action="/createAccount" method="post">
     <fieldset>
-      <legend>Enter your information:</legend><br />
+      <legend>Enter your information:</legend>
+      <h3> <%= message %> </h3>
 
       <label for="username">Username</label> <br />
       <input type="text" name="username"> <br /> <br />
