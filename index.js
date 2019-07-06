@@ -1,16 +1,17 @@
 // JavaScript source code
 // variable preparation
-require('dotenv').config();
-const { Pool } = require("pg");
 const express = require('express');
 const session =  require('express-session');
-const bcrypt = require('bcrypt');
 const uuid = require('uuid/v4');
 const app = express();
 var port = process.env.PORT || 5000;
-const connectionString = process.env.DATABASE_URL;
-const pool = new Pool({connectionString: connectionString})
 const bodyParser =require('body-parser');
+
+//Controllers
+const userController = require('./controllers/userController.js');
+const jotController = require('./controllers/jotController.js');
+const commentController = require('./controllers/commentController.js');
+const autoSaveController = require('./controllers/autoSaveController.js');
 
 app.use(bodyParser.urlencoded({extended : true}));
 // static directory
@@ -31,28 +32,39 @@ app.use(session({
 // CONTROL
 //TODO prevent signed in users from accessing login or sign-up page.
 app.get('/login', function(request, response) {
-  response.render('pages/login', { message: "" });
+  response.render('partials/login', { message: "" });
 });
 app.get('/signup', function(request, response) {
-  response.render('pages/signup', { message: "" });
+  response.render('partials/signup', { message: "" });
 });
+app.post('/login', userController.login);
+
 app.post('/createAccount', accountCreation);
 app.post('/authenticate', authenticate);
+app.post('/autoSaveJot', authenticate);
+
+
+//get home by default. 
 app.get('/home', getHome);
-//app.get('/', function (request, res) { res.sendFile('views/pages/home.html', { root: __dirname }) });
-
-
-
-app.get('/', function(request, response){
-
-  response.redirect('/login');
-});
+app.get('/', getHome);
 
 // Have Control listening on PORT()
 app.listen(port, function () {
   console.log(`The server is listening on PORT ${port}`)
 });
 
+
+function getHome(request, response){
+  //if (request.session.user == undefined || request.session.user == null){
+  //  response.redirect('/login');
+  // } else {
+    //Temp tags
+   // var tags = ['Faith', 'Hope', 'Charity']
+   // var params = { message: "Welcome " + request.session.user.fname + "!", tags: tags};    
+   response.redirect('/home.html');
+  //}
+  
+}
 
 function accountCreation(request, response){
   console.log("****CALLED**** accountCreation()");
@@ -73,7 +85,7 @@ function accountCreation(request, response){
 function createAccount(request, response){
   
   console.log("****CALLED**** createAccount()");
-  var user = new User;
+  var user = new userController.User;
   user.username = request.username.trim();
   user.email = request.email.trim();
   user.fname = request.fname.trim();
@@ -135,65 +147,26 @@ function createAccountResult(result, response){
     message = "Account Created Successfully"
   }
   var params = { message: message};    
-  response.render('pages/login', params);
-}
-
-
-function User(){
-  this.pk;
-  this.username;
-  this.email;
-  this.fname;
-  this.lname;
-  this.hash;
-  this.signup;
-  this.last_signin;
-  this.security_question;
-  this.security_answer;
+  response.render('partials/login', params);
 }
 
 function getDuplicateUsers(email, username, callback){
-  
-  console.log("****CALLED**** getDuplicateUsers()");
   var sql = "SELECT user_pk, user_email, user_username FROM users where user_email=$1::text OR user_username=$2::text";
   var params = [email, username]; 
-
   pool.query(sql, params, function(err, result) {
-    // If an error occurred...
     if (err) {
-        console.log("Error in checkExistsInUsers(" + email + ", " + username + "): ");
+        console.log("Error in getDuplicateUsers(" + email + ", " + username + "): ");
         console.log(err);
     }
-
     callback(result.rows);   
   });
 }
 
 function authenticate(request, response){
-  if (request.body.username.match(/@/)){
-    getUserByEmail(request.body.username, function(user){
-      verifyPassword(user, request, response);
-    });
-  } else {
-    getUserByUsername(request.body.username, function(user){
-      verifyPassword(user, request, response);
-    });
-  }
 
 }
 
-function getUserByUsername(username, callback){
-  var sql = "SELECT user_pk, user_username, user_fname, user_lname, user_email, user_hash, user_signup, user_username, user_last_signin, user_security_question, user_security_answer FROM users WHERE user_username=$1::text";
-  var params = [username]; 
-  pool.query(sql, params, function(err, result) {
-    // If an error occurred...
-    if (err) {
-        console.log("Error in getUserByUsername(): ");
-        console.log(err);
-    }
-    parseUserfromDB(result.rows[0], callback);
-  });
-}
+
 
 function verifyPassword(user, request, response){
   bcrypt.compare(request.body.password, user.hash, function(err, isMatch){
@@ -205,52 +178,10 @@ function verifyPassword(user, request, response){
       })
     } else {
       var params = { message: "Error: Incorrect username or password." };    
-    response.render('pages/login', params);
+    response.render('partials/login', params);
     }
   })
 }
 
-function getUserByEmail(email, callback){
-  var sql = "SELECT user_pk, user_username, user_fname, user_lname, user_email, user_hash, user_signup, user_username, user_last_signin, user_security_question, user_security_answer FROM users WHERE user_email=$1::text";
-  var params = [email]; 
-  pool.query(sql, params, function(err, result) {
-    // If an error occurred...
-    if (err) {
-        console.log("Error in getUserByEmail(): ");
-        console.log(err);
-    }
-    parseUserfromDB(result.rows[0], callback);
-  });
-}
 
-function parseUserfromDB(results, callback){
-  if(results == null || results == undefined){
-    callback(null);
-    return;
-  } else {
-    var user = new User;
-    user.pk = results.user_pk;
-    user.username = results.user_username;
-    user.fname = results.user_fname;
-    user.lname = results.user_lname;
-    user.email = results.user_email;
-    user.hash = results.user_hash;
-    user.signup = results.user_signup;
-    user.last_signin = results.user_last_signin;
-    user.security_question = results.user_security_question;
-    user.security_answer = results.user_security_answer;
-    callback(user);
-  }
-}
 
-function getHome(request, response){
-  if (request.session.user == undefined || request.session.user == null){
-    response.redirect('/login');
-  } else {
-    //Temp tags
-    var tags = ['Faith', 'Hope', 'Charity']
-    var params = { message: "Welcome " + request.session.user.fname + "!", tags: tags};    
-    response.render('pages/home', params);
-  }
-  
-}

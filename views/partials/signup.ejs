@@ -1,21 +1,7 @@
-<!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta charset="utf-8" />
-  <title>ThoughtJot Sign Up Page</title>
-  <script>
-  </script>
-</head>
-<body>
-<header>
-     <h1>Welcome to ThoughtJot!</h1>
-</header>
   <h3>Sign up for ThoughtJot</h3>
-  <form action="/createAccount" method="post">
+  <form id='signup'>
     <fieldset>
       <legend>Enter your information:</legend>
-      <h3> <%= message %> </h3>
 
       <label for="username">Username</label> <br />
       <input type="text" name="username"> <br /> <br />
@@ -35,16 +21,16 @@
       <label for="question">Recovery Question</label> <br />
       <input type="text" name="question"> <br /> <br />
 
-      <label for="answer">Recover Answer</label> <br />
+      <label for="answer">Recovery Answer</label> <br />
       <input type="text" name="answer"> <br /> <br />
+      
+      <h4 id='formMessage'></h4>
 
       <div id="formButtons">
-        <input type="submit" value="Sign Up">
+        <input type="button" onclick='createAccount(this)' value="Sign Up">
         <input type="reset" value="Cancel">
       </div> 
     </fieldset>
     <br />   
-    <p>Already have an account? <a href="/login">Login here!</a></p>
+    <p>Already have an account? <span class='spanLink' onclick='getLoginScreen()'>Log in here!</span></p>
   </form>
-</body>
-</html>

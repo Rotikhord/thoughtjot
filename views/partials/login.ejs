@@ -1,0 +1,16 @@
+  <form id='login'>  
+    <fieldset>
+      <legend>Please sign in:</legend><br />
+      <label for="username">Username or Email:</label> <br />
+      <input type="text" name="username"> <br /> <br />
+      <label for="password">Password</label> <br />
+      <input type="password" name="password"> <br /> <br />
+      <h4 id='formMessage'></h4>
+      <div id="formButtons">
+        <input type="button" onclick='signIn(this)' value="Login">
+        <input type="reset" value="Cancel">
+      </div> 
+    </fieldset>
+    <br />   
+    <p>Don't have an account? <span class='spanLink' onclick='getSignUpScreen()'>Sign up here!</span></p>
+  </form>
