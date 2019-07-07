@@ -2,13 +2,14 @@
 <div>
     <div id='jotDiv'>
         <label>Jot your thoughts!</label><br>
-        <textarea id='jotArea'></textarea>
+        <textarea id='jotArea'><%= autoSave %></textarea>
     </div>
     <div id='tagDiv'>
         <input type='text' list='jotTags' placeholder='Add a tag/keyword'>
             <datalist id="jotTags">
-                <% for (var i = 0; i < tags.length; i++) { %>
-                <option> <%= tags[i] %> </option>
+                <% for (var i = 0; i < tags.length; i++) { 
+                    var id = tags[i].id; %>
+                <option> <%= tags[i].name %> </option>
                 <% } %>
             </datalist>
             <button id='btnAddTag' onclick='addTag()'>+</button>

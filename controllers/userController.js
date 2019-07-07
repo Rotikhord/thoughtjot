@@ -1,10 +1,11 @@
 
 const userModel = require('../models/userModel.js');
+const sessionController = require('./sessionController.js')
 const bcrypt = require('bcrypt');
 
- /****************************************************************
-   * Logic to handle login attempts
-   ****************************************************************/
+/****************************************************************
+ * Logic to handle login attempts
+ ****************************************************************/
 async function login(request, response){
     console.log(request.body);
     //Logic to determine whether to search for user by username or email.
@@ -15,8 +16,11 @@ async function login(request, response){
     }
     //Compare passwords
     if (await verifyPassword(request.body.password, user.hash)){
-        console.log('correct password');
+        //Successful Sign in
+        sessionKey = await sessionController.createSession(user.pk);
+        response.send({result: 'success', message:'Sign-In Successful', sessionKey: sessionKey, user: user});
     } else {
+        //un-Successful Sign In
         response.send({result: 'failed', message: "Invalid username or password"})
     }
 

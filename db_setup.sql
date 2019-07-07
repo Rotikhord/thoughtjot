@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS tags (
     tag_entry_fk    INT NOT NULL
 );
 
+ 
 
 INSERT INTO keywords (kword_name, kword_user_fk) values ('Faith', 0);
 INSERT INTO keywords (kword_name, kword_user_fk) values ('Hope', 0);

@@ -37,11 +37,14 @@ app.get('/login', function(request, response) {
 app.get('/signup', function(request, response) {
   response.render('partials/signup', { message: "" });
 });
+
+app.get('/newEntry', jotController.getNewEntry);
+app.post('/autoSaveJot', jotController.autoSaveJot);
+
 app.post('/login', userController.login);
 
 app.post('/createAccount', accountCreation);
 app.post('/authenticate', authenticate);
-app.post('/autoSaveJot', authenticate);
 
 
 //get home by default. 
