@@ -46,6 +46,10 @@ app.post('/login', userController.login);
 app.post('/createAccount', accountCreation);
 app.post('/authenticate', authenticate);
 
+app.post('/test', function(request, response) {
+  console.log('test called');
+  response.send();
+})
 
 //get home by default. 
 app.get('/home', getHome);

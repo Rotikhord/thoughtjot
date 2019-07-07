@@ -1,4 +1,5 @@
 const pool = require('../database.js');
+const debug = require('../debug.js');
 
 /****************************************************************
  * A template for the Session verification object
@@ -13,9 +14,11 @@ function SessionKey(){
  * Get a session from the database
  *****************************************************************/
 async function getSessionKey(id){
+  if (debug){console.log("getSessionKey() -> Called");}
   var sql = "SELECT key_user_fk, key_key, key_created FROM keys WHERE key_user_fk=$1::int";
   var params = [id]; 
   var results = await pool.query(sql, params);
+  if (debug){console.log("getSessionKey() -> Returning");}
   return parseSessionKeyFromDB(results.rows[0]);
 }
 

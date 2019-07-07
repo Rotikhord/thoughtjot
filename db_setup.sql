@@ -26,7 +26,7 @@ entry_isshared  BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS pendingEntries (
-pending_user_fk   INT UNIQUE NOT NULL,
+pending_user_fk   INT NOT NULL,
 pending_text      TEXT NOT NULL
 );
 

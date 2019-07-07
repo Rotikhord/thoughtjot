@@ -1,4 +1,5 @@
 const pool = require('../database.js');
+const debug = require('../debug.js');
 
 /****************************************************************
  * A template for the jot object
@@ -89,21 +90,26 @@ async function getAutoSavedJot (id){
  ****************************************************************/
 async function insertAutoSavedJot (id, jot){
   //Delete exising saved entry first
+  if (debug){console.log("insertAutoSavedJot() -> Called");}
   try{
-    console.log('EXECUTING DELETE');
-  var sql = "DELETE FROM pendingEntries WHERE pending_user_fk=$1::int";
-  var params = [id]; 
-  await pool.query(sql, params);
+    if (debug){console.log("insertAutoSavedJot() -> DELETE Call");}
+    var sql = "DELETE FROM pendingEntries WHERE pending_user_fk=$1::int";
+    var params = [id]; 
+    await pool.query(sql, params);
+    if (debug){console.log("insertAutoSavedJot() -> DELETE Return");}
 
   //Insert new autosaved entry
-  console.log('EXECUTING INSERT');
+  if (debug){console.log("insertAutoSavedJot() -> INSERT Call");}
   var sql = "INSERT INTO pendingEntries (pending_user_fk, pending_text) VALUES ($1::int, $2::text)";
   params.push(jot);
   await pool.query(sql, params);
+  if (debug){console.log("insertAutoSavedJot() -> INSERT Return");}
   } catch (err){
+    if (debug){console.log("insertAutoSavedJot() -> ERROR CAUGHT");}
     console.log(err);
     return false;
   };
+  if (debug){console.log("insertAutoSavedJot() -> Return TRUE");}
   return true;  
 }
 

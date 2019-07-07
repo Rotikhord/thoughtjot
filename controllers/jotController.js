@@ -1,6 +1,6 @@
 const jotModel = require('../models/jotModel.js');
 const sessionController = require('./sessionController.js')
-
+const debug = require('../debug.js');
 
 /****************************************************************
  * Returns newJotEntry ejs template (With autosaved material)
@@ -23,18 +23,23 @@ async function getNewEntry(request, response){
 async function autoSaveJot(request, response){
     var key = request.body.key;
     var jot = request.body.jot;
-    console.log(request.body);
+    if (debug){console.log("autoSaveJot() -> Called");}
+    response.write('Autosave successful'); 
+    
     if (await sessionController.verifySession(key.id, key.key) == true){
         if (await jotModel.insertAutoSavedJot(key.id, jot)){
+            if (debug){console.log("autoSaveJot() -> Returning SUCCESS");}
             response.write('Autosave successful'); 
         } else {
-            console.log("Error autosaving record");
+            if (debug){console.log("autoSaveJot() -> Returning ERROR SAVING RECORD");}
             response.write('Database Error');
         }
     } else {
-        response.write('Error: Invalid Session');
-        console.log('Invalid Session');
-    }    
+        if (debug){console.log("autoSaveJot() -> Returning INVALID SESSION");}
+        response.write('Invalid Session');
+    } 
+    //This is key to prevent the posts from hanging. 
+    response.send();
 }
 
 module.exports = {
