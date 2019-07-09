@@ -37,23 +37,19 @@ async function getRecentJots(userID, tag){
 /****************************************************************
  * Parses the database results into a JOT object
  ****************************************************************/
-function parseJotsFromDB(userID){
+function parseJotsFromDB(results){
   if(results == null || results == undefined){
-    user == null;
+    var jot = null;
   } else {
-    var user = new User;
-    user.pk = results.user_pk;
-    user.username = results.user_username;
-    user.fname = results.user_fname;
-    user.lname = results.user_lname;
-    user.email = results.user_email;
-    user.hash = results.user_hash;
-   user.signup = results.user_signup;
-      user.last_signin = results.user_last_signin;
-      user.security_question = results.user_security_question;
-      user.security_answer = results.user_security_answer;
+    var jot = new Jot;
+    jot.pk = results.entry_pk;
+    jot.user_id = results.entry_user_fk;
+    jot.entry_date = results.entry_date;
+    jot.text = results.entry_text;
+    jot.isshared = results.entry_isshared;
     }
-    return user;    
+    console.log(jot);
+    return jot;    
   }
 
 
@@ -69,6 +65,21 @@ async function getKeywords (id){
     keywordArray.push({id: results.rows[i].kword_pk, name: results.rows[i].kword_name});
  }
   return keywordArray;
+}
+
+/****************************************************************
+ * Check if a keyword exists for a user and if not, add it
+ ****************************************************************/
+async function insertKeyword (id, name){
+  var sql = "SELECT kword_pk FROM keywords WHERE (kword_user_fk=0 OR kword_user_fk=$1::int) AND kword_name=$2::text";
+  var params = [id, name];
+  var results = await pool.query(sql, params);
+  if (results.rows == 0){
+    sql = "INSERT INTO keywords (kword_user_fk, kword_name) VALUES ($1::int, $2::text) RETURNING kword_pk";
+    var results = await pool.query(sql, params);
+  }
+  var keyword = {id: results.rows[0].kword_pk, name: name };
+  return keyword;
 }
 
 /****************************************************************
@@ -113,10 +124,58 @@ async function insertAutoSavedJot (id, jot){
   return true;  
 }
 
+/****************************************************************
+ * Inserts a new JOT into the database. 
+ ****************************************************************/
+async function insertNewJot (id, jot){
+  //Insert new autosaved entry
+  if (debug){console.log("insertNewJot() -> INSERT Call");}
+  try {
+    var sql = "INSERT INTO entries (entry_user_fk, entry_text) VALUES ($1::int, $2::text) RETURNING entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared";
+    var params = [id, jot];
+    var results = await pool.query(sql, params);
+    if (debug){console.log("insertNewJot() -> INSERT Return");}
+  } catch (err){
+    if (debug){console.log("insertNewJot() -> ERROR CAUGHT");}
+    console.log(err);
+    return false;
+  };
+  if (debug){console.log("insertNewJot() -> Return TRUE");}
+  return parseJotsFromDB(results.rows[0]);  
+}
+
+/****************************************************************
+ * Update or insert tag record. 
+ ****************************************************************/
+async function updateTag (keyword, jot){
+  //Insert new autosaved entry
+  if (debug){console.log("updateTag() -> INSERT Call");}
+  console.log(keyword);
+  console.log(jot);
+  try {
+    var sql = "SELECT tag_pk  FROM tags where tag_kword_fk = $1::int AND tag_entry_fk = $2::int";
+    var params = [keyword, jot];
+    results = await pool.query(sql, params);
+    if (results.rows == 0){
+      sql = "INSERT INTO tags (tag_kword_fk, tag_entry_fk) VALUES ($1::int, $2::int) RETURNING tag_pk";
+      await pool.query(sql, params);
+    } 
+    
+  } catch (err){
+    if (debug){console.log("insertNewJot() -> ERROR CAUGHT");}
+    console.log(err);
+    return false;
+  };
+  return;
+}
+
   module.exports = {
       Jot: Jot,
       getKeywords: getKeywords,
       getAutoSavedJot: getAutoSavedJot,
       insertAutoSavedJot: insertAutoSavedJot,
+      insertNewJot: insertNewJot,
+      insertKeyword: insertKeyword,
+      updateTag: updateTag,
       getRecentJots: getRecentJots
   };

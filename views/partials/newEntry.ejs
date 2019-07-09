@@ -1,20 +1,21 @@
-<!-- views/partials/header.ejs -->
 <div>
     <div id='jotDiv'>
         <label>Jot your thoughts!</label><br>
-        <textarea id='jotArea'><%= autoSave %></textarea>
+        <textarea data-jot-id='0' id='jotArea'><%= autoSave %></textarea>
     </div>
     <div id='tagDiv'>
         <input id='tagInput' type='text' list='jotTags' placeholder='Add a tag/keyword'>
             <datalist id="jotTags">
-                <% for (var i = 0; i < tags.length; i++) { 
-                    var id = tags[i].id; %>
-                <option> <%= tags[i].name %> </option>
+                <% for (var i = 0; i < unAppliedTags.length; i++) {  %>
+                <option data_tag_id='<%= unAppliedTags[i].id %>'> <%= unAppliedTags[i].name %> </option>
                 <% } %>
             </datalist>
             <button id='btnAddTag' onclick='addTag()'>+</button>
             <select id='removeTag'>
-                <option selected disabled hidden>Remove tags</option>
+                <option selected disabled hidden value='0'>Remove tags</option>
+                <% for (var i = 0; i < appliedTags.length; i++) {  %>
+                <option data_tag_id='<%= appliedTags[i].id %>'> <%= appliedTags[i].name %> </option>
+                <% } %>
             </select>
             <button id='btnRemoveTag' onclick='removeTag()'>-</button>
         </div>

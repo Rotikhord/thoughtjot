@@ -40,6 +40,7 @@ app.get('/signup', function(request, response) {
 
 app.get('/newEntry', jotController.getNewEntry);
 app.post('/autoSaveJot', jotController.autoSaveJot);
+app.post('/saveJot', jotController.saveJot);
 
 app.post('/login', userController.login);
 

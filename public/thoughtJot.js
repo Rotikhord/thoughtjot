@@ -135,10 +135,11 @@ function addTag(){
     var value = $('#tagInput').val();
     $('#tagInput').val('');
     if (value != ''){
-        removeTagFromOptions('jotTags', value);
-        addTagToOptions('removeTag', value);
+        data = removeTagFromOptions('jotTags', value);
+        addTagToOptions('removeTag', value, data);
     }
 }
+
 /****************************************************************
  * This contains the logic for removing a tag from the new Jot.
  ****************************************************************/
@@ -147,15 +148,15 @@ function removeTag(){
     var value = $("#removeTag option:selected").text();
     $('#removeTag option:eq(0)').prop('selected', true);
     if (value != $('#removeTag option:eq(0)').val()){
-        removeTagFromOptions('removeTag', value);
-        addTagToOptions('jotTags', value);
+        data = removeTagFromOptions('removeTag', value);
+        addTagToOptions('jotTags', value, data);
     }
 }
 
  /****************************************************************
  * This function adds a tag to an option list.
  ****************************************************************/
-function addTagToOptions(elementID, value){
+function addTagToOptions(elementID, value, data){
     //Make sure the selected tag hasn't already been applied.
     var alreadyExists = false;
     $('#' + elementID + ' option').each(function(){
@@ -164,28 +165,51 @@ function addTagToOptions(elementID, value){
         }
     })
     if (!alreadyExists){
-        $('#' + elementID).append($('<option>', {value: value, text: value}));
+        $('#' + elementID).append($('<option>', {value: value, text: value, data_tag_id: data}));
     }
 }
  /****************************************************************
- * Remove a tag from an options list. 
+ * Remove a tag from an options list and returns the deleted item data
  ****************************************************************/
 function removeTagFromOptions(elementID, value){
+    var data = '0'; //Default value
     //Loop through options and delete the selected option if exists. 
     $('#' + elementID + ' option').each(function(){
-        console.log(elementID);
-        console.log(value + '  -  ' + $(this).text());
         if ($(this).val() == value){
+            data = $(this).attr('data_tag_id');
             $(this).remove();
-            console.log('found');
         }
     })
+    return data;
+}
+
+/***************************************************************
+ * Uses AJAX to save a JOT & related tags to the server. 
+ **************************************************************/
+function saveJot (formID, callback){
+    var jotID = $('#jotArea').attr('data-jot-id');
+    var jot = $('#jotArea').val();
+    var tags = getAppliedTags();
+    if (jot.length > 0){
+        $.post('/saveJot', {jotID: jotID, jot: jot, tags: tags, key: sessionKey}, function(data, status){ 
+            console.log('Status: ' + status); 
+        });
+    }   
 }
 
  /****************************************************************
- * 
+ * Returns a list of applied tags.
  ****************************************************************/
-
+function getAppliedTags(){
+    var tagList = [];
+    $('#removeTag option').each(function(){
+        if ($(this).val() != '0'){
+            var tag = {id: $(this).attr('data_tag_id'), name: $(this).val()};
+            tagList.push(tag);
+        }
+    })
+    return tagList;
+}
  /****************************************************************
  * 
  ****************************************************************/
