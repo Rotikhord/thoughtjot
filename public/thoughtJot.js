@@ -128,16 +128,59 @@ function autoSave(){
 }
 
 /****************************************************************
- * 
+ * This contains the logic for applying a tag to the new Jot.
  ****************************************************************/
+function addTag(){
+    //Store the value in variable & clear input field
+    var value = $('#tagInput').val();
+    $('#tagInput').val('');
+    if (value != ''){
+        removeTagFromOptions('jotTags', value);
+        addTagToOptions('removeTag', value);
+    }
+}
+/****************************************************************
+ * This contains the logic for removing a tag from the new Jot.
+ ****************************************************************/
+function removeTag(){
+    //Store the value in variable & clear input field
+    var value = $("#removeTag option:selected").text();
+    $('#removeTag option:eq(0)').prop('selected', true);
+    if (value != $('#removeTag option:eq(0)').val()){
+        removeTagFromOptions('removeTag', value);
+        addTagToOptions('jotTags', value);
+    }
+}
 
  /****************************************************************
- * 
+ * This function adds a tag to an option list.
  ****************************************************************/
-
+function addTagToOptions(elementID, value){
+    //Make sure the selected tag hasn't already been applied.
+    var alreadyExists = false;
+    $('#' + elementID + ' option').each(function(){
+        if ($(this).val() == value || $(this).text() == value){
+            alreadyExists = true;
+        }
+    })
+    if (!alreadyExists){
+        $('#' + elementID).append($('<option>', {value: value, text: value}));
+    }
+}
  /****************************************************************
- * 
+ * Remove a tag from an options list. 
  ****************************************************************/
+function removeTagFromOptions(elementID, value){
+    //Loop through options and delete the selected option if exists. 
+    $('#' + elementID + ' option').each(function(){
+        console.log(elementID);
+        console.log(value + '  -  ' + $(this).text());
+        if ($(this).val() == value){
+            $(this).remove();
+            console.log('found');
+        }
+    })
+}
 
  /****************************************************************
  * 

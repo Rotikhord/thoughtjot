@@ -5,7 +5,7 @@
         <textarea id='jotArea'><%= autoSave %></textarea>
     </div>
     <div id='tagDiv'>
-        <input type='text' list='jotTags' placeholder='Add a tag/keyword'>
+        <input id='tagInput' type='text' list='jotTags' placeholder='Add a tag/keyword'>
             <datalist id="jotTags">
                 <% for (var i = 0; i < tags.length; i++) { 
                     var id = tags[i].id; %>
