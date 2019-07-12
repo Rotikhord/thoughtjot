@@ -12,11 +12,11 @@ const userController = require('./controllers/userController.js');
 const jotController = require('./controllers/jotController.js');
 const commentController = require('./controllers/commentController.js');
 const autoSaveController = require('./controllers/autoSaveController.js');
+const sessionController = require('./controllers/sessionController.js');
+const debug = require('./debug.js');
 
 app.use(bodyParser.urlencoded({extended : true}));
-// static directory
 app.use(express.static('public'));
-
 // VIEW
 //app.set('views', 'view-access');
 app.set('view engine', 'ejs');
@@ -38,19 +38,13 @@ app.get('/signup', function(request, response) {
   response.render('partials/signup', { message: "" });
 });
 
-app.get('/newEntry', jotController.getNewEntry);
-app.post('/autoSaveJot', jotController.autoSaveJot);
-app.post('/saveJot', jotController.saveJot);
+app.get('/newEntry', authenticate, jotController.getNewEntry);
+app.post('/autoSaveJot', authenticate, jotController.autoSaveJot);
+app.post('/saveJot', authenticate, jotController.saveJot);
 
 app.post('/login', userController.login);
-
 app.post('/createAccount', accountCreation);
-app.post('/authenticate', authenticate);
 
-app.post('/test', function(request, response) {
-  console.log('test called');
-  response.send();
-})
 
 //get home by default. 
 app.get('/home', getHome);
@@ -61,6 +55,28 @@ app.listen(port, function () {
   console.log(`The server is listening on PORT ${port}`)
 });
 
+/***********************************************************
+ * Middleware function that handles session key authenication 
+ ***********************************************************/
+async function authenticate(request, response, next){
+  if (debug){console.log("authenticate() -> Called");}
+  //console.log(request);
+  if (request.method == 'POST'){
+    var key = request.body.key;
+    console.log(request.body);
+  } else {
+    var key = request.query.key;
+    console.log(request.query);
+  }
+  if (await sessionController.verifySession(key.id, key.key) == true){
+    if (debug){console.log("authenticate() -> Success");}
+    next();
+  } else {
+    if (debug){console.log("authenticate() -> Failed");}
+    response.write('Error Authenticating.');
+    response.send();
+  }    
+}
 
 function getHome(request, response){
   //if (request.session.user == undefined || request.session.user == null){
@@ -168,10 +184,6 @@ function getDuplicateUsers(email, username, callback){
     }
     callback(result.rows);   
   });
-}
-
-function authenticate(request, response){
-
 }
 
 

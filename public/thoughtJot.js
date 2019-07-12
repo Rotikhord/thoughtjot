@@ -88,7 +88,7 @@ function initializeSession(data){
  * This function queries the server for the add new entry page
  ***************************************************************/
 function getNewEntryScreen(){
-    $.get('/newEntry', sessionKey, function(data, status){
+    $.get('/newEntry', {key: sessionKey}, function(data, status){
         if (status == 'success'){
             $('#contentArea').html(data);
             clearInterval(intervalFunction);
