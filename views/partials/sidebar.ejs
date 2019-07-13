@@ -1,7 +1,7 @@
 <div>
     <div id='sideBarSelectDiv'>
-        <select id='filterTags'>
-            <option value='0'>Display All:</option>
+        <select id='filterTags' onchange='getFilteredJots()'>
+            <option data_tag_id='0' value='0'>Display All:</option>
             <% for (var i = 0; i < tags.length; i++) {  
             var selected = '';                
             if(selection == tags[i].id){
@@ -17,11 +17,11 @@
             if (i >= 10){
                 display = "display='none'"
             }%>
-        <div data_jot_id='<%= jot.pk %>' data_index='<%= jot.pk %>' class='sideBarJot' onclick='getJot(this)' <%= display %>>
+        <div data_jot_id='<%= jots[i].pk %>' data_index='<%= i %>' class='sideBarJot' onclick='getListJot(this)' <%= display %>>
         <h5><%= jots[i].entry_date.toDateString() %> </h5> 
             <%=jots[i].text %> 
-        <% } %>
         </div>
+        <% } %>      
 
     </div>
 </div>

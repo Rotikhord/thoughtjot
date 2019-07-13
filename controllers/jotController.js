@@ -1,5 +1,5 @@
 const jotModel = require('../models/jotModel.js');
-//const sessionController = require('./sessionController.js')
+const commentModel = require('../models/commentModel.js')
 const debug = require('../debug.js');
 const utility = require('../utiltyMethods.js');
 
@@ -37,7 +37,8 @@ async function displayJot(request, response){
     if (debug){console.log("displayJot() -> Called");}
     var jot = await jotModel.getJot(key.id, jotID);
     var activeTags = await jotModel.getTags(jotID, true);
-    response.render('partials/jotView', { jot: jot, activeTags:activeTags});  
+    var comments = await commentModel.getAllComments(jotID);
+    response.render('partials/jotView', { jot: jot, activeTags: activeTags, comments: comments});  
 }
 
 /****************************************************************
@@ -132,6 +133,21 @@ function updateJotTags (jotID, activeTags, inactiveTags){
     return; 
 }
 
+/****************************************************************
+ * Confirms a jot is owned by a given user.
+ ****************************************************************/
+async function confirmJot(userID, jotID){
+    if (debug){console.log("confirmJot() -> Called");}
+    //Get matching jot.
+    var jot = await jotModel.getJot(userID, jotID);
+    if (jot == null){
+        //Jot doesn't exist or is owned by someone else
+        return false;
+    } else {
+        //Jot is valid
+        return true;
+    }
+}
 
 
 
@@ -141,5 +157,6 @@ module.exports = {
     saveJot: saveJot,
     editJot: editJot,
     displayJot: displayJot,
-    getFilteredJots: getFilteredJots
+    getFilteredJots: getFilteredJots,
+    confirmJot: confirmJot
 };

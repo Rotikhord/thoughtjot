@@ -226,6 +226,7 @@ function saveJot(){
     if (jot.length > 0){
         $.post('/saveJot', {jotID: jotID, jot: jot, activeTags: activeTags, inactiveTags: inactiveTags, key: sessionKey}, function(data, status){ 
             displayJot(data);
+            getFilteredJots();
         }).fail(function(jqXHR) {
             console.log(jqXHR.status);
             //TODO - If 401 - redirect to login 
@@ -251,11 +252,10 @@ function getTags(parentID){
  *  Returns a partial view displaying a list of recent Jots. 
  ****************************************************************/
 function getFilteredJots(){
-    var selection = $('#filterTags').children("option:selected").val();
+    var selection = $('#filterTags').children("option:selected").attr('data_tag_id');
     if (selection == null || selection == undefined){
         selection = 0;
     }
-    console.log(selection);
     $.get('/getFilteredJots', {key: sessionKey, selection : selection}, function(data){
         $('#sidebarLeft').html(data);
     }).fail(function(jqXHR) {
@@ -266,6 +266,78 @@ function getFilteredJots(){
     }); 
 
 }
- /****************************************************************
- * 
+/****************************************************************
+ * calls the displayJot method and passes in the ID of the specified jot
  ****************************************************************/
+function getListJot(element){
+    displayJot($(element).attr('data_jot_id'))
+}
+
+/****************************************************************
+ * Creates a post request to store comment on server
+ ****************************************************************/
+function saveComment(element){
+    var parent = $(element).parent(".commentCard");
+    var comment = {};
+    comment.text = parent.children('.commentArea').eq(0).val();
+    comment.id = parent.attr('data_comment_id');
+    comment.jotID = $('#jotArea').attr('data_jot_id');
+    console.log(comment);
+    if (comment.text.length > 0){
+        $.post('/saveComment', {key: sessionKey, comment: comment}, function(data, status){ 
+            closeComment(element, data);
+            //displayJot(data);
+            //getFilteredJots();
+        }).fail(function(jqXHR) {
+            console.log(jqXHR.status);
+            //TODO - If 401 - redirect to login 
+            //TODO - if 400 - display error message 
+        });
+    }   
+}
+
+/****************************************************************
+ * This cancels the comment edits.
+ ****************************************************************/
+function closeComment(element, newComment){
+    var parent = $(element).parent(".commentCard");
+    var parentID = parent.attr('data_comment_id');
+    if (parentID == '0'){
+        parent.children('.commentArea').eq(0).val('');
+        if (newComment != null){
+            parent.before("<div data_comment_id='" + newComment.id + "' class='commentCard'></div>");
+            var display = parent.prev();
+            display.append("<h6 class='commentHeader'>" + new Date(newComment.date).toDateString() + "</h6>")
+            display.append("<p>" + newComment.text + "</p>")
+            display.append("<button class='btnEditComment' onclick='editComment(this)'>Edit</button>")
+        }
+    } else {
+        parent.empty();
+        parent.remove();
+        $('.commentCard').each(function(){
+            if ($(this).attr('data_comment_id') == parentID){
+                if (newComment != null){
+                    $(this).children('p').eq(0).text(newComment.text);
+                }
+                $(this).show();
+            }
+        })
+    }
+}
+
+/****************************************************************
+ * This cancels the comment edits.
+ ****************************************************************/
+function editComment(element){
+    var parent = $(element).parent(".commentCard");
+    var text = parent.children('p').eq(0).text();
+    var id = parent.attr('data_comment_id');
+    parent.hide();
+    parent.before("<div data_comment_id='" + id + "' class='commentCard'></div>");
+    var editable = parent.prev();
+    editable.append('<label>Add a comment:</label><br>')
+    editable.append("<textarea class='commentArea'>" + text + "</textarea><br></br>")
+    editable.append("<button class='btnAddComment' onclick='saveComment(this)'>Save</button>")
+    editable.append("<button class='btnClrComment' onclick='closeComment(this, null)'>Cancel</button>")
+   
+}

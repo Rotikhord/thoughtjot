@@ -22,13 +22,6 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 
-app.use(session({
-  name: 'id',
-  secret: uuid(),
-  duration: 30 * 60 * 1000,
-  activeDuration: 5 * 60 * 1000
-}));
-
 // CONTROL
 //TODO prevent signed in users from accessing login or sign-up page.
 app.get('/login', function(request, response) {
@@ -44,7 +37,7 @@ app.get('/editJot', authenticate, jotController.editJot);
 app.get('/displayJot', authenticate, jotController.displayJot);
 app.post('/autoSaveJot', authenticate, jotController.autoSaveJot);
 app.post('/saveJot', authenticate, jotController.saveJot);
-
+app.post('/saveComment', authenticate, commentController.saveComment);
 app.post('/login', userController.login);
 app.post('/createAccount', accountCreation);
 

@@ -1,0 +1,13 @@
+    <% for(var i = 0; i < comments.length; i++) {%>
+    <div data_comment_id='<%= comments[i].id %>' class='commentCard'>
+        <h6 class='commentHeader'><%= comments[i].date.toDateString() %> </h6>
+        <p><%=comments[i].text %></p> 
+        <button class='btnEditComment' onclick='editComment(this)'>Edit</button>
+    </div>
+    <% } %>
+    <div data_comment_id='0' class='commentCard'>
+        <label>Add a comment:</label><br>
+        <textarea class='commentArea'></textarea><br>
+        <button class='btnAddComment' onclick='saveComment(this)'>Save</button>
+        <button class='btnClrComment' onclick='closeComment(this, null)'>Cancel</button>
+    </div>

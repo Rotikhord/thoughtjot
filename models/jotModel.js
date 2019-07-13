@@ -10,6 +10,7 @@ function Jot(){
   this.entry_date;
   this.text;
   this.isshared;
+
 }
 
 /****************************************************************
@@ -44,7 +45,7 @@ async function getKeywordsFromDB(sql, params){
  ****************************************************************/
 async function getJotsByTag(userID, tagID){
   if (debug){console.log("getJotsByTag() -> Called");}
-  var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_user_fk=$1::int AND EXISTS (SELECT tag_pk FROM tags WHERE entry_pk = tag_entry_fk AND tag_kword_fk=$2::int) ORDER BY entry_date DESC";
+  var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_user_fk=$1::int AND EXISTS (SELECT tag_pk FROM tags WHERE entry_pk = tag_entry_fk AND tag_kword_fk=$2::int) ORDER BY entry_pk DESC";
   var params = [userID, tagID]; 
   var results = await pool.query(sql, params);
   var jots = [];
@@ -71,7 +72,7 @@ async function getJot(userID, jotID){
  ****************************************************************/
 async function getAllJots(userID){
   if (debug){console.log("getJotsByTag() -> Called");}
-  var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_user_fk=$1::int ORDER BY entry_date DESC";
+  var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_user_fk=$1::int ORDER BY entry_pk DESC";
   var params = [userID]; 
   var results = await pool.query(sql, params);
   var jots = [];

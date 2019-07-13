@@ -18,16 +18,16 @@ kword_user_fk   INT
 );
 
 CREATE TABLE IF NOT EXISTS entries (
-entry_pk        SERIAL NOT NULL PRIMARY KEY,
-entry_user_fk   INT NOT NULL,
-entry_date      DATE NOT NULL DEFAULT NOW(),
-entry_text      TEXT NOT NULL,
-entry_isshared  BOOLEAN DEFAULT FALSE
+    entry_pk        SERIAL NOT NULL PRIMARY KEY,
+    entry_user_fk   INT NOT NULL,
+    entry_date      DATE NOT NULL DEFAULT NOW(),
+    entry_text      TEXT NOT NULL,
+    entry_isshared  BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS pendingEntries (
-pending_user_fk   INT NOT NULL,
-pending_text      TEXT NOT NULL
+    pending_user_fk   INT NOT NULL,
+    pending_text      TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS tags (
@@ -36,6 +36,13 @@ CREATE TABLE IF NOT EXISTS tags (
     tag_entry_fk    INT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS comments (
+    comment_pk          SERIAL NOT NULL PRIMARY KEY,
+    comment_entry_fk    INT NOT NULL REFERENCES entries(entry_pk),
+    comment_user_fk   INT NOT NULL REFERENCES users(user_pk),
+    comment_date      DATE NOT NULL DEFAULT NOW(),
+    comment_text      TEXT NOT NULL
+);
  
 
 INSERT INTO keywords (kword_name, kword_user_fk) values ('Faith', 0);
