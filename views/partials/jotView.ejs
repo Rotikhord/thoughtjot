@@ -1,0 +1,15 @@
+<div>
+    <div id='jotDiv'>
+        <h3><%= jot.entry_date.toDateString() %> </h3>
+        <div data-jot-id='<%= jot.pk %>' id='jotArea'> 
+            <%=jot.text %> 
+            <button id='btnEditJot' onclick='editJot()'>Edit</button>
+        </div>
+        <h4 id='tagListHeader'> Applied Tags: </h4>
+        <ul>
+        <% for (var i = 0; i < activeTags.length; i++) {  %>
+                <li data_tag_id='<%= activeTags[i].id %>'> <%= activeTags[i].name %> </li>
+        <% } %>
+        </ul>
+    </div>
+</div>

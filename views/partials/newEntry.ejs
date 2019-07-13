@@ -4,14 +4,14 @@
         <textarea data-jot-id='0' id='jotArea'><%= autoSave %></textarea>
     </div>
     <div id='tagDiv'>
-        <input id='tagInput' type='text' list='jotTags' placeholder='Add a tag/keyword'>
-            <datalist id="jotTags">
+        <input id='tagInput' type='text' list='inactiveTags' placeholder='Add a tag/keyword'>
+            <datalist id="inactiveTags">
                 <% for (var i = 0; i < unAppliedTags.length; i++) {  %>
                 <option data_tag_id='<%= unAppliedTags[i].id %>'> <%= unAppliedTags[i].name %> </option>
                 <% } %>
             </datalist>
             <button id='btnAddTag' onclick='addTag()'>+</button>
-            <select id='removeTag'>
+            <select id='activeTags'>
                 <option selected disabled hidden value='0'>Remove tags</option>
                 <% for (var i = 0; i < appliedTags.length; i++) {  %>
                 <option data_tag_id='<%= appliedTags[i].id %>'> <%= appliedTags[i].name %> </option>

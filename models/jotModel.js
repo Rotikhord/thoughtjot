@@ -13,31 +13,60 @@ function Jot(){
 }
 
 /****************************************************************
- * Returns an AutoSaved Jot
+ * Returns a list of keyworkds based on parameters
  ****************************************************************/
-async function getAuto5SavedJot (userID){
-  var sql = "SELECT user_pk, user_username, user_fname, user_lname, user_email, user_hash, user_signup, user_username, user_last_signin, user_security_question, user_security_answer FROM users WHERE user_email=$1::text";
-  var params = [email]; 
-  var results = await pool.query(sql, params);
-  return parseUserfromDB(results.rows[0]);
+async function getTags (jotID, active){  
+  if (debug){console.log("getTags() -> Called");}
+  var sqlModifier = '';
+  if (!active){
+    sqlModifier = ' NOT ';
+  }
+  var sql = "SELECT kword_pk, kword_name FROM keywords WHERE " + sqlModifier + " EXISTS (SELECT tag_pk FROM tags WHERE kword_pk = tag_kword_fk AND tag_entry_fk=$1::int)";
+  var params = [jotID];
+  return await getKeywordsFromDB(sql, params);
 }
 
-
+/****************************************************************
+ * Retrieves keywords form db and parses results into array. 
+ ****************************************************************/
+async function getKeywordsFromDB(sql, params){
+  if (debug){console.log("getKeywordsFromDB() -> Called");}
+  var results = await pool.query(sql, params);
+  var keywordArray = [];  
+  for (var i = 0; i < results.rows.length; i++){
+    keywordArray.push({id: results.rows[i].kword_pk, name: results.rows[i].kword_name});
+ }
+  return keywordArray;
+}
 
 /****************************************************************
  * Returns the 10 most recent Jots with a given tag
  ****************************************************************/
 async function getRecentJots(userID, tag){
-  var sql = "SELECT user_pk, user_username, user_fname, user_lname, user_email, user_hash, user_signup, user_username, user_last_signin, user_security_question, user_security_answer FROM users WHERE user_username=$1::text";
-  var params = [username]; 
+}
+
+/****************************************************************
+ * Returns the specified jot
+ ****************************************************************/
+async function getJot(userID, jotID){  
+  if (debug){console.log("getJot() -> Called");}
+  var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_pk=$1::int AND entry_user_fk=$2::int";
+  var params = [jotID.toString(), userID.toString()]; 
   var results = await pool.query(sql, params);
-  return parseUserfromDB(results.rows[0]);
+  return parseJotsFromDB(results.rows[0]);
+}
+
+/****************************************************************
+ * Returns all the jots for a user
+ ****************************************************************/
+async function getAllJots(userID, tag){
 }
 
 /****************************************************************
  * Parses the database results into a JOT object
  ****************************************************************/
-function parseJotsFromDB(results){
+function parseJotsFromDB(results){  
+  if (debug){console.log("parseJotsFromDB() -> Called");}
   if(results == null || results == undefined){
     var jot = null;
   } else {
@@ -59,12 +88,7 @@ function parseJotsFromDB(results){
 async function getKeywords (id){
   var sql = "SELECT kword_pk, kword_name FROM keywords WHERE kword_user_fk=0 OR kword_user_fk=$1::int";
   var params = [id];
-  var results = await pool.query(sql, params);
-  var keywordArray = [];  
-  for (var i = 0; i < results.rows.length; i++){
-    keywordArray.push({id: results.rows[i].kword_pk, name: results.rows[i].kword_name});
- }
-  return keywordArray;
+  return await getKeywordsFromDB(sql, params);
 }
 
 /****************************************************************
@@ -102,25 +126,42 @@ async function getAutoSavedJot (id){
 async function insertAutoSavedJot (id, jot){
   //Delete exising saved entry first
   if (debug){console.log("insertAutoSavedJot() -> Called");}
+  await dropAutoSavedJot(id);
   try{
-    if (debug){console.log("insertAutoSavedJot() -> DELETE Call");}
-    var sql = "DELETE FROM pendingEntries WHERE pending_user_fk=$1::int";
-    var params = [id]; 
+    //Insert new autosaved entry
+    if (debug){console.log("insertAutoSavedJot() -> INSERT Call");}
+    var sql = "INSERT INTO pendingEntries (pending_user_fk, pending_text) VALUES ($1::int, $2::text)";
+    var params = [id, jot];
     await pool.query(sql, params);
-    if (debug){console.log("insertAutoSavedJot() -> DELETE Return");}
-
-  //Insert new autosaved entry
-  if (debug){console.log("insertAutoSavedJot() -> INSERT Call");}
-  var sql = "INSERT INTO pendingEntries (pending_user_fk, pending_text) VALUES ($1::int, $2::text)";
-  params.push(jot);
-  await pool.query(sql, params);
-  if (debug){console.log("insertAutoSavedJot() -> INSERT Return");}
+    if (debug){console.log("insertAutoSavedJot() -> INSERT Return");}
   } catch (err){
     if (debug){console.log("insertAutoSavedJot() -> ERROR CAUGHT");}
     console.log(err);
     return false;
   };
   if (debug){console.log("insertAutoSavedJot() -> Return TRUE");}
+  return true;  
+}
+
+/****************************************************************
+ * Drops existing autosave record 
+ ****************************************************************/
+async function dropAutoSavedJot (id){
+  //Delete exising saved entry first
+  if (debug){console.log("dropAutoSavedJot() -> Called");}
+  try{
+    if (debug){console.log("dropAutoSavedJot() -> DELETE Call");}
+    var sql = "DELETE FROM pendingEntries WHERE pending_user_fk=$1::int";
+    var params = [id]; 
+    await pool.query(sql, params);
+    if (debug){console.log("dropAutoSavedJot() -> DELETE Return");}
+
+  } catch (err){
+    if (debug){console.log("dropAutoSavedJot() -> ERROR CAUGHT");}
+    console.log(err);
+    return false;
+  };
+  if (debug){console.log("dropAutoSavedJot() -> Return TRUE");}
   return true;  
 }
 
@@ -148,10 +189,7 @@ async function insertNewJot (id, jot){
  * Update or insert tag record. 
  ****************************************************************/
 async function updateTag (keyword, jot){
-  //Insert new autosaved entry
   if (debug){console.log("updateTag() -> INSERT Call");}
-  console.log(keyword);
-  console.log(jot);
   try {
     var sql = "SELECT tag_pk  FROM tags where tag_kword_fk = $1::int AND tag_entry_fk = $2::int";
     var params = [keyword, jot];
@@ -169,13 +207,37 @@ async function updateTag (keyword, jot){
   return;
 }
 
+/****************************************************************
+ * Delete a stored tag. 
+ ****************************************************************/
+async function dropTag (keyword, jot){
+  //Insert new autosaved entry
+  if (debug){console.log("dropTag() -> Called");}
+  try {
+    var sql = "DELETE FROM tags where tag_kword_fk = $1::int AND tag_entry_fk = $2::int";
+    var params = [keyword, jot];
+    results = await pool.query(sql, params);    
+  } catch (err){
+    if (debug){console.log("dropTag() -> ERROR CAUGHT");}
+    console.log(err);
+    return false;
+  };
+  return;
+}
+
   module.exports = {
       Jot: Jot,
       getKeywords: getKeywords,
       getAutoSavedJot: getAutoSavedJot,
+      getTags: getTags,
+      getJot: getJot,
+      getRecentJots: getRecentJots,
+      getAllJots: getAllJots,
       insertAutoSavedJot: insertAutoSavedJot,
+      dropAutoSavedJot: dropAutoSavedJot,
       insertNewJot: insertNewJot,
       insertKeyword: insertKeyword,
       updateTag: updateTag,
+      dropTag: dropTag,
       getRecentJots: getRecentJots
   };

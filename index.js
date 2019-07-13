@@ -39,6 +39,7 @@ app.get('/signup', function(request, response) {
 });
 
 app.get('/newEntry', authenticate, jotController.getNewEntry);
+app.get('/displayJot', authenticate, jotController.displayJot);
 app.post('/autoSaveJot', authenticate, jotController.autoSaveJot);
 app.post('/saveJot', authenticate, jotController.saveJot);
 
@@ -73,8 +74,7 @@ async function authenticate(request, response, next){
     next();
   } else {
     if (debug){console.log("authenticate() -> Failed");}
-    response.write('Error Authenticating.');
-    response.send();
+    response.status(401).end(jotID);
   }    
 }
 

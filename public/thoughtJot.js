@@ -101,6 +101,33 @@ function getNewEntryScreen(){
 }
 
 /***************************************************************
+ * This function queries the server for the add new entry page
+ ***************************************************************/
+function editJot(){
+    var jotID = data = $('#jotArea').attr('data_tag_id');
+    $.get('/editJot', {key: sessionKey, jotID: jotID}, function(data, status){
+        if (status == 'success'){
+            $('#contentArea').html(data);
+        } 
+    })
+}
+
+/***************************************************************
+ * This function queries the server for the add new entry page
+ ***************************************************************/
+function displayJot(jotID){
+    $.get('/displayJot', {key: sessionKey, jotID : jotID}, function(data){
+        $('#contentArea').html(data);
+    }).fail(function(jqXHR) {
+        console.log(jqXHR.status);
+        //TODO - if 401 - redirect to login 
+        //TODO - if 404 - display not found
+        //TODO - if 400 - display error message 
+    }); 
+}
+
+
+/***************************************************************
  * This function queries the server for the signup sub-page
  ***************************************************************/
 function getSignUpScreen(){
@@ -135,8 +162,8 @@ function addTag(){
     var value = $('#tagInput').val();
     $('#tagInput').val('');
     if (value != ''){
-        data = removeTagFromOptions('jotTags', value);
-        addTagToOptions('removeTag', value, data);
+        data = removeTagFromOptions('inactiveTags', value);
+        addTagToOptions('activeTags', value, data);
     }
 }
 
@@ -145,11 +172,11 @@ function addTag(){
  ****************************************************************/
 function removeTag(){
     //Store the value in variable & clear input field
-    var value = $("#removeTag option:selected").text();
-    $('#removeTag option:eq(0)').prop('selected', true);
-    if (value != $('#removeTag option:eq(0)').val()){
-        data = removeTagFromOptions('removeTag', value);
-        addTagToOptions('jotTags', value, data);
+    var value = $("#activeTags option:selected").text();
+    $('#activeTags option:eq(0)').prop('selected', true);
+    if (value != $('#activeTags option:eq(0)').val()){
+        data = removeTagFromOptions('activeTags', value);
+        addTagToOptions('inactiveTags', value, data);
     }
 }
 
@@ -186,13 +213,19 @@ function removeTagFromOptions(elementID, value){
 /***************************************************************
  * Uses AJAX to save a JOT & related tags to the server. 
  **************************************************************/
-function saveJot (formID, callback){
+function saveJot(){
     var jotID = $('#jotArea').attr('data-jot-id');
     var jot = $('#jotArea').val();
-    var tags = getAppliedTags();
+    var activeTags = getTags('activeTags');
+    var inactiveTags = getTags('inactiveTags');
+    clearInterval(intervalFunction);
     if (jot.length > 0){
-        $.post('/saveJot', {jotID: jotID, jot: jot, tags: tags, key: sessionKey}, function(data, status){ 
-            console.log('Status: ' + status); 
+        $.post('/saveJot', {jotID: jotID, jot: jot, activeTags: activeTags, inactiveTags: inactiveTags, key: sessionKey}, function(data, status){ 
+            displayJot(data);
+        }).fail(function(jqXHR) {
+            console.log(jqXHR.status);
+            //TODO - If 401 - redirect to login 
+            //TODO - if 400 - display error message 
         });
     }   
 }
@@ -200,9 +233,9 @@ function saveJot (formID, callback){
  /****************************************************************
  * Returns a list of applied tags.
  ****************************************************************/
-function getAppliedTags(){
+function getTags(parentID){
     var tagList = [];
-    $('#removeTag option').each(function(){
+    $('#' + parentID + ' option').each(function(){
         if ($(this).val() != '0'){
             var tag = {id: $(this).attr('data_tag_id'), name: $(this).val()};
             tagList.push(tag);
