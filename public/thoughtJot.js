@@ -23,7 +23,10 @@ function onLoad(){
 /***************************************************************
  * This function queries to server and checks to see if session if valid
  ***************************************************************/
-function authenticateSession(){getLoginScreen();}
+function authenticateSession(){
+    //TODO 
+    getLoginScreen();
+}
 
 
 /***************************************************************
@@ -81,7 +84,7 @@ function initializeSession(data){
 
     //Get new entry screen by default
     getNewEntryScreen();
-
+    getFilteredJots();
 }
 
 /***************************************************************
@@ -245,9 +248,24 @@ function getTags(parentID){
     return tagList;
 }
  /****************************************************************
- * 
+ *  Returns a partial view displaying a list of recent Jots. 
  ****************************************************************/
+function getFilteredJots(){
+    var selection = $('#filterTags').children("option:selected").val();
+    if (selection == null || selection == undefined){
+        selection = 0;
+    }
+    console.log(selection);
+    $.get('/getFilteredJots', {key: sessionKey, selection : selection}, function(data){
+        $('#sidebarLeft').html(data);
+    }).fail(function(jqXHR) {
+        console.log(jqXHR.status);
+        //TODO - if 401 - redirect to login 
+        //TODO - if 404 - display not found
+        //TODO - if 400 - display error message 
+    }); 
 
+}
  /****************************************************************
  * 
  ****************************************************************/

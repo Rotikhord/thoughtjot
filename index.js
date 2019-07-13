@@ -38,6 +38,7 @@ app.get('/signup', function(request, response) {
   response.render('partials/signup', { message: "" });
 });
 
+app.get('/getFilteredJots', authenticate, jotController.getFilteredJots);
 app.get('/newEntry', authenticate, jotController.getNewEntry);
 app.get('/editJot', authenticate, jotController.editJot);
 app.get('/displayJot', authenticate, jotController.displayJot);

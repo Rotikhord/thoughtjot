@@ -40,9 +40,19 @@ async function getKeywordsFromDB(sql, params){
 }
 
 /****************************************************************
- * Returns the 10 most recent Jots with a given tag
+ * Returns Jots tagged with a specific tag
  ****************************************************************/
-async function getRecentJots(userID, tag){
+async function getJotsByTag(userID, tagID){
+  if (debug){console.log("getJotsByTag() -> Called");}
+  var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_user_fk=$1::int AND EXISTS (SELECT tag_pk FROM tags WHERE entry_pk = tag_entry_fk AND tag_kword_fk=$2::int) ORDER BY entry_date DESC";
+  var params = [userID, tagID]; 
+  var results = await pool.query(sql, params);
+  var jots = [];
+  for (var i = 0; i < results.rows.length; i++){
+    jots.push(parseJotsFromDB(results.rows[i]));
+  }
+  console.log(jots);
+  return jots;
 }
 
 /****************************************************************
@@ -59,7 +69,17 @@ async function getJot(userID, jotID){
 /****************************************************************
  * Returns all the jots for a user
  ****************************************************************/
-async function getAllJots(userID, tag){
+async function getAllJots(userID){
+  if (debug){console.log("getJotsByTag() -> Called");}
+  var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_user_fk=$1::int ORDER BY entry_date DESC";
+  var params = [userID]; 
+  var results = await pool.query(sql, params);
+  var jots = [];
+  for (var i = 0; i < results.rows.length; i++){
+    jots.push(parseJotsFromDB(results.rows[i]));
+  }
+  console.log(jots);
+  return jots;
 }
 
 /****************************************************************
@@ -77,7 +97,6 @@ function parseJotsFromDB(results){
     jot.text = results.entry_text;
     jot.isshared = results.entry_isshared;
     }
-    console.log(jot);
     return jot;    
   }
 
@@ -253,13 +272,12 @@ async function dropTag (keyword, jot){
       getTags: getTags,
       getJot: getJot,
       updateJot: updateJot,
-      getRecentJots: getRecentJots,
+      getJotsByTag: getJotsByTag,
       getAllJots: getAllJots,
       insertAutoSavedJot: insertAutoSavedJot,
       dropAutoSavedJot: dropAutoSavedJot,
       insertNewJot: insertNewJot,
       insertKeyword: insertKeyword,
       updateTag: updateTag,
-      dropTag: dropTag,
-      getRecentJots: getRecentJots
+      dropTag: dropTag
   };

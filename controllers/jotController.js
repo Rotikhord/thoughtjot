@@ -40,6 +40,21 @@ async function displayJot(request, response){
     response.render('partials/jotView', { jot: jot, activeTags:activeTags});  
 }
 
+/****************************************************************
+ * Returns a partial view of recent jots.
+ ****************************************************************/
+async function getFilteredJots(request, response){
+    var key = request.query.key;    
+    var tagID = utility.validifyInt(request.query.selection);
+    if (debug){console.log("getFilteredJots() -> Called");}
+    if (tagID == 0){
+        var jots = await jotModel.getAllJots(key.id, tagID);
+    } else {
+        var jots = await jotModel.getJotsByTag(key.id, tagID);
+    }
+    var tags = await jotModel.getKeywords(key.id);
+    response.render('partials/sidebar', { jots: jots, tags: tags, selection:tagID});  
+}
 
 /****************************************************************
  * Logic for auto-saving a jot. 
@@ -125,5 +140,6 @@ module.exports = {
     autoSaveJot: autoSaveJot,
     saveJot: saveJot,
     editJot: editJot,
-    displayJot: displayJot
+    displayJot: displayJot,
+    getFilteredJots: getFilteredJots
 };
