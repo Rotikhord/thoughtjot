@@ -9,6 +9,14 @@ function validify(variable){
     return variable;
 }
 
+function validifyInt(variable){
+    if (variable == null || variable == undefined){
+        return 0;
+    }
+    return variable;
+}
+
 module.exports = {
-    validify: validify
+    validify: validify,
+    validifyInt: validifyInt
 };

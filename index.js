@@ -39,6 +39,7 @@ app.get('/signup', function(request, response) {
 });
 
 app.get('/newEntry', authenticate, jotController.getNewEntry);
+app.get('/editJot', authenticate, jotController.editJot);
 app.get('/displayJot', authenticate, jotController.displayJot);
 app.post('/autoSaveJot', authenticate, jotController.autoSaveJot);
 app.post('/saveJot', authenticate, jotController.saveJot);

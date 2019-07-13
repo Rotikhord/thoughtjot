@@ -51,7 +51,7 @@ async function getRecentJots(userID, tag){
 async function getJot(userID, jotID){  
   if (debug){console.log("getJot() -> Called");}
   var sql = "SELECT entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared FROM entries WHERE entry_pk=$1::int AND entry_user_fk=$2::int";
-  var params = [jotID.toString(), userID.toString()]; 
+  var params = [jotID, userID]; 
   var results = await pool.query(sql, params);
   return parseJotsFromDB(results.rows[0]);
 }
@@ -117,7 +117,10 @@ async function getAutoSavedJot (id){
   if (results.rows.length > 0){
     text = results.rows[0].pending_text;
   }
-  return text;
+  jot = new Jot;
+  jot.pk = 0;
+  jot.text = text;
+  return jot;
 }
 
 /****************************************************************
@@ -186,6 +189,24 @@ async function insertNewJot (id, jot){
 }
 
 /****************************************************************
+ * Inserts a new JOT into the database. 
+ ****************************************************************/
+async function updateJot(userID, jotID, jot){
+  //Insert new autosaved entry
+  if (debug){console.log("updateJot() -> INSERT Call");}
+  try {
+    var sql = "UPDATE entries SET entry_text = $1::text WHERE entry_user_fk = $2::int AND  entry_pk = $3::int RETURNING entry_pk, entry_user_fk, entry_date, entry_text, entry_isshared";
+    var params = [jot, userID, jotID];
+    var results = await pool.query(sql, params);
+  } catch (err){
+    if (debug){console.log("updateJot() -> ERROR CAUGHT");}
+    console.log(err);
+    return false;
+  };
+  return parseJotsFromDB(results.rows[0]);  
+}
+
+/****************************************************************
  * Update or insert tag record. 
  ****************************************************************/
 async function updateTag (keyword, jot){
@@ -231,6 +252,7 @@ async function dropTag (keyword, jot){
       getAutoSavedJot: getAutoSavedJot,
       getTags: getTags,
       getJot: getJot,
+      updateJot: updateJot,
       getRecentJots: getRecentJots,
       getAllJots: getAllJots,
       insertAutoSavedJot: insertAutoSavedJot,

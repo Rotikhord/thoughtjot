@@ -1,7 +1,7 @@
 <div>
     <div id='jotDiv'>
         <h3><%= jot.entry_date.toDateString() %> </h3>
-        <div data-jot-id='<%= jot.pk %>' id='jotArea'> 
+        <div data_jot_id='<%= jot.pk %>' id='jotArea'> 
             <%=jot.text %> 
             <button id='btnEditJot' onclick='editJot()'>Edit</button>
         </div>

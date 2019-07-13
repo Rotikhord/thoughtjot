@@ -9,10 +9,24 @@ const utility = require('../utiltyMethods.js');
 async function getNewEntry(request, response){
     var key = request.query.key;    
     if (debug){console.log("getNewEntry() -> Called");}
-    var tags = await jotModel.getKeywords(key.id);
-    var autoSave = await jotModel.getAutoSavedJot(key.id);
-    response.render('partials/newEntry', { unAppliedTags: tags, appliedTags:[], autoSave: autoSave});  
+    var inactiveTags = await jotModel.getKeywords(key.id);
+    var jot = await jotModel.getAutoSavedJot(key.id);
+    response.render('partials/newEntry', { inactiveTags: inactiveTags, activeTags:[], jot: jot});  
 }
+
+/****************************************************************
+ * Returns newJotEntry ejs template (with previously saved Jot)
+ ****************************************************************/
+async function editJot(request, response){
+    var key = request.query.key;    
+    var jotID = utility.validifyInt(request.query.jotID);
+    if (debug){console.log("getNewEntry() -> Called");}
+    var jot = await jotModel.getJot(key.id, jotID);
+    var activeTags = await jotModel.getTags(jotID, true);
+    var inactiveTags = await jotModel.getTags(jotID, false);
+    response.render('partials/newEntry', { inactiveTags: inactiveTags, activeTags: activeTags, jot: jot});  
+}
+
 
 /****************************************************************
  * Returns the displayJot screen with the specified jot.
@@ -52,7 +66,7 @@ async function saveJot(request, response){
     var activeTags = utility.validify(request.body.activeTags);
     var inactiveTags = utility.validify(request.body.inactiveTags);
     var jot = request.body.jot;
-    var jotID = request.body.jotID;
+    var jotID = utility.validifyInt(request.body.jotID);
     var savedJot = {};
     //if 
     if (debug){console.log("saveJot() -> Called");}
@@ -60,16 +74,15 @@ async function saveJot(request, response){
     //if Jot id = 0 create new jot, otherwise update existing
     if (jotID == '0') {
         savedJot = await jotModel.insertNewJot(key.id, jot);
-        jotID = savedJot.pk;
     } else {
-        //TODO - add UPDATE Functionality
+        savedJot = await jotModel.updateJot(key.id, jotID, jot);
     }
     activeTags = await updateKeywords(key.id, activeTags);
     //Add keywords if necessary. 
     updateJotTags(jotID, activeTags, inactiveTags);
     //Send the jotID of the saved jot. 
-    if (Number.isInteger(jotID)){
-        response.status(202).json(jotID);
+    if (Number.isInteger(savedJot.pk)){
+        response.status(202).json(savedJot.pk);
     } else {
         response.status(400).end();
     }
@@ -111,5 +124,6 @@ module.exports = {
     getNewEntry: getNewEntry,
     autoSaveJot: autoSaveJot,
     saveJot: saveJot,
+    editJot: editJot,
     displayJot: displayJot
 };

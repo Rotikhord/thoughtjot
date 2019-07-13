@@ -1,20 +1,20 @@
 <div>
     <div id='jotDiv'>
         <label>Jot your thoughts!</label><br>
-        <textarea data-jot-id='0' id='jotArea'><%= autoSave %></textarea>
+        <textarea data-jot-id='<%= jot.pk %>' id='jotArea'><%= jot.text %></textarea>
     </div>
     <div id='tagDiv'>
         <input id='tagInput' type='text' list='inactiveTags' placeholder='Add a tag/keyword'>
             <datalist id="inactiveTags">
-                <% for (var i = 0; i < unAppliedTags.length; i++) {  %>
-                <option data_tag_id='<%= unAppliedTags[i].id %>'> <%= unAppliedTags[i].name %> </option>
+                <% for (var i = 0; i < inactiveTags.length; i++) {  %>
+                <option data_tag_id='<%= inactiveTags[i].id %>'> <%= inactiveTags[i].name %> </option>
                 <% } %>
             </datalist>
             <button id='btnAddTag' onclick='addTag()'>+</button>
             <select id='activeTags'>
                 <option selected disabled hidden value='0'>Remove tags</option>
-                <% for (var i = 0; i < appliedTags.length; i++) {  %>
-                <option data_tag_id='<%= appliedTags[i].id %>'> <%= appliedTags[i].name %> </option>
+                <% for (var i = 0; i < activeTags.length; i++) {  %>
+                <option data_tag_id='<%= activeTags[i].id %>'> <%= activeTags[i].name %> </option>
                 <% } %>
             </select>
             <button id='btnRemoveTag' onclick='removeTag()'>-</button>

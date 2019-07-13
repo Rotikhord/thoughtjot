@@ -104,7 +104,8 @@ function getNewEntryScreen(){
  * This function queries the server for the add new entry page
  ***************************************************************/
 function editJot(){
-    var jotID = data = $('#jotArea').attr('data_tag_id');
+    var jotID = data = $('#jotArea').attr('data_jot_id');
+    console.log(jotID);
     $.get('/editJot', {key: sessionKey, jotID: jotID}, function(data, status){
         if (status == 'success'){
             $('#contentArea').html(data);
