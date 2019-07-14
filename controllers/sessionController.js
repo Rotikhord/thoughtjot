@@ -7,7 +7,9 @@ const debug = require('../debug.js');
  /****************************************************************
    * Logic to create new sessions
    ****************************************************************/
-async function createSession(userID){
+async function createSession(userID){    
+    if (debug){console.log("createSession() -> Called");}
+    console.log(userID);
     var sessionKey = await bcrypt.hash(uuid(), 1);
     await sessionModel.deleteSessionKey(userID);
     var keyObject = await sessionModel.insertSessionKey(userID, sessionKey);

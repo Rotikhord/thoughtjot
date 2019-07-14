@@ -22,8 +22,9 @@ async function editJot(request, response){
     var jotID = utility.validifyInt(request.query.jotID);
     if (debug){console.log("getNewEntry() -> Called");}
     var jot = await jotModel.getJot(key.id, jotID);
-    var activeTags = await jotModel.getTags(jotID, true);
-    var inactiveTags = await jotModel.getTags(jotID, false);
+    console.log( [jotID, key.id, true]);
+    var activeTags = await jotModel.getTags(jotID, key.id, true);
+    var inactiveTags = await jotModel.getTags(jotID, key.id, false);
     response.render('partials/newEntry', { inactiveTags: inactiveTags, activeTags: activeTags, jot: jot});  
 }
 
@@ -36,7 +37,7 @@ async function displayJot(request, response){
     var jotID = request.query.jotID;
     if (debug){console.log("displayJot() -> Called");}
     var jot = await jotModel.getJot(key.id, jotID);
-    var activeTags = await jotModel.getTags(jotID, true);
+    var activeTags = await jotModel.getTags(jotID, key.id, true);
     var comments = await commentModel.getAllComments(jotID);
     response.render('partials/jotView', { jot: jot, activeTags: activeTags, comments: comments});  
 }
@@ -77,26 +78,25 @@ async function autoSaveJot(request, response){
 /****************************************************************
  * Logic for saving a jot. 
  ****************************************************************/
-async function saveJot(request, response){
+async function saveJot(request, response){    
+    if (debug){console.log("saveJot() -> Called");}
     var key = request.body.key;
     var activeTags = utility.validify(request.body.activeTags);
     var inactiveTags = utility.validify(request.body.inactiveTags);
     var jot = request.body.jot;
     var jotID = utility.validifyInt(request.body.jotID);
     var savedJot = {};
-    //if 
-    if (debug){console.log("saveJot() -> Called");}
-    console.log(request.body);
+
     //if Jot id = 0 create new jot, otherwise update existing
     if (jotID == '0') {
         savedJot = await jotModel.insertNewJot(key.id, jot);
     } else {
         savedJot = await jotModel.updateJot(key.id, jotID, jot);
     }
+
     activeTags = await updateKeywords(key.id, activeTags);
-    //Add keywords if necessary. 
-    updateJotTags(jotID, activeTags, inactiveTags);
-    //Send the jotID of the saved jot. 
+    updateJotTags(savedJot.pk, activeTags, inactiveTags);
+    
     if (Number.isInteger(savedJot.pk)){
         response.status(202).json(savedJot.pk);
     } else {

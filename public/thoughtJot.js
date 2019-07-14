@@ -28,7 +28,6 @@ function authenticateSession(){
     getLoginScreen();
 }
 
-
 /***************************************************************
  * This function queries the server for the login sub-page
  ***************************************************************/
@@ -50,6 +49,8 @@ function postForm(formID, callback){
     console.log('/'+formID);
    // console.log($('#' + formID).serialize());
     $.post('/' + formID, $('#' + formID).serialize(), function(data, status) {
+        console.log(data);
+        console.log(status);
         callback(data, status);
     });
 }
@@ -67,6 +68,35 @@ function signIn(element){
         }
     });
 }
+
+/***************************************************************
+ * Uses an AJAX post request to sign up for the application
+ **************************************************************/
+function createAccount(element){
+    var field = $('fieldset');
+    var isValid = true;
+    field.children('input').each(function() {
+        var label = $(this).prev().prev();
+        if($(this).val() == ''){
+            isValid = false;
+            label.text(label.attr('data_defaultTag') +  ' is required.');
+            $(this).prev().prev().css('color', 'red');
+        } else {
+            label.text(label.attr('data_defaultTag'));
+            $(this).prev().prev().css('color', 'black');
+        }
+    });
+    if (isValid){
+        postForm($(element).closest('form').attr('id'), function(data, status){
+            if (data.result != 'success'){
+                $('#formMessage').text(data.message);
+            } else {
+                initializeSession(data);
+            }
+        });
+    }
+}
+
 
 /**************************************************************
  * Initializes a local session. 
@@ -111,6 +141,7 @@ function editJot(){
     console.log(jotID);
     $.get('/editJot', {key: sessionKey, jotID: jotID}, function(data, status){
         if (status == 'success'){
+            clearInterval(intervalFunction);
             $('#contentArea').html(data);
         } 
     })

@@ -16,14 +16,14 @@ function Jot(){
 /****************************************************************
  * Returns a list of keyworkds based on parameters
  ****************************************************************/
-async function getTags (jotID, active){  
+async function getTags (jotID, userID, active){  
   if (debug){console.log("getTags() -> Called");}
   var sqlModifier = '';
   if (!active){
     sqlModifier = ' NOT ';
   }
-  var sql = "SELECT kword_pk, kword_name FROM keywords WHERE " + sqlModifier + " EXISTS (SELECT tag_pk FROM tags WHERE kword_pk = tag_kword_fk AND tag_entry_fk=$1::int)";
-  var params = [jotID];
+  var sql = "SELECT kword_pk, kword_name FROM keywords WHERE " + sqlModifier + " EXISTS (SELECT tag_pk FROM tags WHERE kword_pk = tag_kword_fk AND tag_entry_fk=$1::int) AND (kword_user_fk=0 OR kword_user_fk=$2::int)";
+  var params = [jotID, userID];
   return await getKeywordsFromDB(sql, params);
 }
 
@@ -230,7 +230,7 @@ async function updateJot(userID, jotID, jot){
  * Update or insert tag record. 
  ****************************************************************/
 async function updateTag (keyword, jot){
-  if (debug){console.log("updateTag() -> INSERT Call");}
+  if (debug){console.log("updateTag() -> Called");}
   try {
     var sql = "SELECT tag_pk  FROM tags where tag_kword_fk = $1::int AND tag_entry_fk = $2::int";
     var params = [keyword, jot];

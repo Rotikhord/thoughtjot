@@ -25,7 +25,8 @@ async function getSessionKey(id){
 /*****************************************************************
  * Add a new session to the database
  *****************************************************************/
-async function insertSessionKey(id, key){
+async function insertSessionKey(id, key){  
+  if (debug){console.log("insertSessionKey() -> Called");}
   var sql = "INSERT INTO keys (key_user_fk, key_key) VALUES ($1::int, $2::text) RETURNING key_user_fk, key_key, key_created";
   var params = [id, key]; 
   var results = await pool.query(sql, params);
@@ -36,6 +37,7 @@ async function insertSessionKey(id, key){
  * Delete an existing session.
  ****************************************************************/
 async function deleteSessionKey(id){
+  if (debug){console.log("deleteSessionKey() -> Called");}
   var sql = "DELETE FROM keys WHERE key_user_fk=$1::int";
   var params = [id]; 
   var results = await pool.query(sql, params);

@@ -53,3 +53,13 @@ INSERT INTO keywords (kword_name, kword_user_fk) values ('Kindness', 0);
 INSERT INTO keywords (kword_name, kword_user_fk) values ('Gladness', 0);
 INSERT INTO keywords (kword_name, kword_user_fk) values ('Family', 0);
 INSERT INTO keywords (kword_name, kword_user_fk) values ('Funny', 0);
+
+
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/01/19', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada nunc vel risus commodo. Interdum consectetur libero id faucibus nisl tincidunt eget nullam. Arcu cursus euismod quis viverra nibh cras pulvinar mattis. Nulla facilisi morbi tempus iaculis urna. Nullam non nisi est sit amet facilisis magna.' );
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/02/19', '' );
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/03/19', '' );
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/04/19', '' );
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/05/19', '' );
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/06/19', '' );
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/07/19', '' );
+INSERT INTO entries (entry_user_fk, entry_date, entry_text) VALUES (24, '07/08/19', '' );

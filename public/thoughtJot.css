@@ -1,0 +1,64 @@
+#sidebarLeft{
+    display: flex;
+    padding: 1rem;
+}
+.sideBarJot{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-radius: .5rem;
+    max-height: 5rem;
+    overflow: hidden;
+    margin-top: .5rem;
+    padding: .5rem;
+    transition-duration: .5s;
+}
+.sideBarJot h5{
+    margin: 0;
+    text-align: center;
+}
+.sideBarJot:hover{
+    background-color: lightgreen;
+    max-height: 15rem;
+}
+#jotDiv{
+    width:70%;
+    padding: 1rem;
+    margin: 1rem;
+    background-color: lightgreen;
+    border: 1px solid black;
+    border-radius: .5rem;
+}
+#jotDiv h6, #jotDiv h3, #jotDiv h4, #jotDiv ul{
+    margin: 0;
+} 
+#jotArea, .commentCard  p{
+    background-color: lightcyan;
+    border: 1px solid black;
+    padding: .5rem;
+    box-sizing: border-box;
+    border-radius: .5rem;
+}
+
+#jotDiv textarea{
+    width: 90%;
+    height: 5rem;
+    border-radius: .5rem;
+}
+
+.commentCard{
+    width:70%;
+    padding: 1rem;
+    margin: 1rem;
+    background-color: lightgreen;
+    border: 1px solid black;
+    border-radius: .5rem;
+}
+.commentCard textarea{
+    width: 90%;
+    height: 2rem;
+    border-radius: .5rem;
+}
+.commentCard  h6, .commentCard  p{
+    margin: 0;
+} 

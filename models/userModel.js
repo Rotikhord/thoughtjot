@@ -1,4 +1,5 @@
 const pool = require('../database.js');
+const debug = require('../debug.js');
 
 /****************************************************************
  * A template for the USER object
@@ -36,12 +37,24 @@ function User(){
     return parseUserfromDB(results.rows[0]);
   }
 
+/****************************************************************
+ * Inserts a USER into the database
+ ****************************************************************/
+async function insertNewUser(user){
+  if (debug){console.log("insertNewUser() -> Called");}
+  var sql = "INSERT INTO users (user_username, user_fname, user_lname, user_email, user_hash, user_signup, user_last_signin, user_security_question, user_security_answer)" + 
+    "VALUES ($1::text, $2::text, $3::text, $4::text, $5::text, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $6::text, $7::text) RETURNING user_username, user_fname, user_lname, user_email, user_hash, user_signup, user_last_signin, user_security_question, user_security_answer, user_pk, user_signup, user_last_signin";
+    var params = [user.username, user.fname, user.lname, user.email, user.hash, user.security_question, user.security_answer];
+    var results = await pool.query(sql, params);
+    return parseUserfromDB(results.rows[0]);
+  }
+
   /****************************************************************
    * Parses database results into a USER object
    ****************************************************************/
   function parseUserfromDB(results){
     if(results == null || results == undefined){
-      user == null;
+      user = null;
     } else {
       var user = new User;
       user.pk = results.user_pk;
@@ -65,5 +78,6 @@ function User(){
   module.exports = {
       User: User,
       getUserByEmail: getUserByEmail,
-      getUserByUsername: getUserByUsername
+      getUserByUsername: getUserByUsername,
+      insertNewUser: insertNewUser
   };
