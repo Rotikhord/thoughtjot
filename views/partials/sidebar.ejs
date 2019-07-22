@@ -1,6 +1,8 @@
-<div>
-    <div id='sideBarSelectDiv'>
-        <select id='filterTags' onchange='getFilteredJots()'>
+<div class='container-fluid p-1 h-100 mainSection'>
+    <div id='sideBarSelectDiv' class='card'>
+        <h5 class='text-center card-title m-1'>Filter Jots<h5>
+        <div class='container'>
+        <select id='filterTags' class='w-100' onchange='getFilteredJots()'>
             <option data_tag_id='0' value='0'>Display All:</option>
             <% for (var i = 0; i < tags.length; i++) {  
             var selected = '';                
@@ -10,6 +12,7 @@
             <option <%= selected %> data_tag_id='<%= tags[i].id %>'> <%= tags[i].name %> </option>               
             <% } %>
         </select>
+        </div>
     </div>
     <div id='sideBarJotDiv' data_page='1'>
         <% for (var i = 0; i < jots.length; i++) {  
@@ -17,9 +20,9 @@
             if (i >= 10){
                 display = "display='none'"
             }%>
-        <div data_jot_id='<%= jots[i].pk %>' data_index='<%= i %>' class='sideBarJot' onclick='getListJot(this)' <%= display %>>
-        <h5><%= jots[i].entry_date.toDateString() %> </h5> 
-            <%=jots[i].text %> 
+        <div data_jot_id='<%= jots[i].pk %>' data_index='<%= i %>' class='sidebarCard card m-1 p-0' onclick='getListJot(this)' <%= display %>>
+        <div class='card-header p-0'><h6 class='card-title m-0 text-center'><%= jots[i].entry_date.toDateString() %> </h6></div> 
+        <div class='card-body p-1 pl-3 pr-3'><p class='m-0'><%=jots[i].text %></p></div> 
         </div>
         <% } %>      
 

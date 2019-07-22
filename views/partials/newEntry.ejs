@@ -1,26 +1,34 @@
-<div>
-    <div id='jotDiv'>
-        <label>Jot your thoughts!</label><br>
-        <textarea data-jot-id='<%= jot.pk %>' id='jotArea'><%= jot.text %></textarea>
-    </div>
-    <div id='tagDiv'>
-        <input id='tagInput' type='text' list='inactiveTags' placeholder='Add a tag/keyword'>
+<div class='container-fluid p-1 h-100 mainSection'>
+    <div class='container card'>
+        <div id='jotDiv'>
+            <label class='card-title h4 text-center w-100 mt-2'>Jot your thoughts!</label><br>
+            <textarea class='w-100' data-jot-id='<%= jot.pk %>' id='jotArea'><%= jot.text %></textarea>
+        </div>
+        <div id='tagDiv' class='row'>
+        <div class='col-6 d-flex flex-row'>
+            <input class='col-9' id='tagInput' type='text' list='inactiveTags' placeholder='Add a tag/keyword'>
             <datalist id="inactiveTags">
                 <% for (var i = 0; i < inactiveTags.length; i++) {  %>
                 <option data_tag_id='<%= inactiveTags[i].id %>'> <%= inactiveTags[i].name %> </option>
                 <% } %>
             </datalist>
-            <button id='btnAddTag' onclick='addTag()'>+</button>
-            <select id='activeTags'>
+            <button class='col btn btn-outline-dark' id='btnAddTag' onclick='addTag()'><i class="fas fa-plus"></i></button>
+        </div>
+        <div class='col-6 d-flex flex-row'>
+            <select id='activeTags' class='col-9 h-100'>
                 <option selected disabled hidden value='0'>Remove tags</option>
                 <% for (var i = 0; i < activeTags.length; i++) {  %>
-                <option data_tag_id='<%= activeTags[i].id %>'> <%= activeTags[i].name %> </option>
+                <option data_tag_id='<%= activeTags[i].id %>'><%= activeTags[i].name %></option>
                 <% } %>
             </select>
-            <button id='btnRemoveTag' onclick='removeTag()'>-</button>
+            <button class='col btn btn-outline-dark' id='btnRemoveTag' onclick='removeTag()'><i class="fas fa-times"></i></button>
         </div>
-        <div id='saveDiv'>
-            <button id='btnSaveJot' onclick='saveJot()'>Save</button>
-            <button id='btnClearJot' onclick='clearJot()'>Clear</button>
+    </div>
+    <div id='saveDiv' class='row mt-3 mb-3'>
+        <div class='col-2'></div>
+        <button class='col-3 btn btn-outline-dark' id='btnSaveJot' onclick='saveJot()'>Save</button>
+        <div class='col-2'></div>
+        <button class='col-3 btn btn-outline-dark' id='btnClearJot' onclick='clearJot()'>Clear</button>
+        <div class='col-2'></div>
     </div>
 </div>

@@ -1,7 +1,75 @@
-#sidebarLeft{
-    display: flex;
-    padding: 1rem;
+/* Colors From dark to light
+SkyBlues: #E1F3FE #B4E0FC #87CEFA #659BBB #44677D #22343E
+Oranges: #FCD9C3 #FBC6A5 #FAB387 #FFA065 #FF904B #FF7F30 #9F3D00
+
+*/
+html, body{
+    background-color: #44677D;
 }
+.mainSection{
+    background-color: #87CEFA;
+    border-radius: .5rem;
+    border: 2px solid #9F3D00;
+    margin-top: 1rem;
+}
+.card{
+    background-color: #B4E0FC;
+    border: 2px solid #9F3D00;
+}
+.card-header{
+    background-color: #659BBB
+}
+ .form-control, input, select, textarea, datalist{
+    background-color: #FCD9C3;
+    border-radius: .25rem;
+    border: 1px solid #22343E;
+ }
+.sidebarCard{    
+    min-height: 5rem;
+    max-height: 5rem;
+    overflow: hidden;
+    transition-duration: .5s;
+}
+.btn {
+    background-color: #FBC6A5;
+    border: 1px solid #9F3D00;
+    color: black;
+}
+
+.btn:hover{
+    background-color: #9F3D00;
+    border: 1px solid #FBC6A5;
+    color: #FBC6A5;
+}
+
+.sidebarCard:hover{    
+    min-height: 5rem;
+    max-height: 15rem; 
+    background-color: #FAB387;
+    cursor: pointer;
+}
+.sidebarCard .card-title{    
+    transition-duration: .5s;
+}
+.sidebarCard:hover .card-title{
+    background-color: #FF904B;
+}
+#sidebarLeft{
+    min-height: 30rem;
+}
+#jotArea{
+    min-height: 15rem;
+}
+.commentBody{
+    font-size: 14px;
+}
+#logo{
+    max-height: 10rem;
+}
+.color{
+
+}
+/*
 .sideBarJot{
     display: flex;
     flex-direction: column;
@@ -62,3 +130,5 @@
 .commentCard  h6, .commentCard  p{
     margin: 0;
 } 
+
+*/

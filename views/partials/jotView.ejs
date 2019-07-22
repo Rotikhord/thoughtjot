@@ -1,16 +1,23 @@
-<div>
+<div class='container-fluid p-1 h-100 p-3 mainSection'>
+<div class='container card'>
     <div id='jotDiv'>
-        <h3><%= jot.entry_date.toDateString() %> </h3>
-        <div data_jot_id='<%= jot.pk %>' id='jotArea'> 
-            <%=jot.text %> 
-            <button id='btnEditJot' onclick='editJot()'>Edit</button>
+        <div class='card-header p-0 d-flex flex-row'>
+            <h4 class='card-title text-center w-100 mt-2'><%= jot.entry_date.toDateString() %> </h3>
+            <button class='btn btn-outline-dark' id='btnEditJot' onclick='editJot()'><i class="fas fa-edit"></i></button>
         </div>
-        <h4 id='tagListHeader'> Applied Tags: </h4>
-        <ul>
-        <% for (var i = 0; i < activeTags.length; i++) {  %>
-                <li data_tag_id='<%= activeTags[i].id %>'> <%= activeTags[i].name %> </li>
+        <div class='card-body p-2' data_jot_id='<%= jot.pk %>' id='jotArea'> 
+            <%=jot.text %> 
+        </div>
+        <h6 id='tagListHeader m-0'> Applied Tags: </h6>
+        <%  var tagString = '';
+            for (var i = 0; i < activeTags.length; i++) {  
+                if (i != 0){
+                    tagString += ', ';
+                }
+                tagString += activeTags[i].name;%>
         <% } %>
-        </ul>
+        <p class='m-0 mb-3'><%= tagString%></p>
+    </div>
     </div>
     <div id='commentDiv'>
         <% include commentBlock.ejs %>

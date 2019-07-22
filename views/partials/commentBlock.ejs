@@ -1,13 +1,27 @@
     <% for(var i = 0; i < comments.length; i++) {%>
-    <div data_comment_id='<%= comments[i].id %>' class='commentCard'>
-        <h6 class='commentHeader'><%= comments[i].date.toDateString() %> </h6>
-        <p><%=comments[i].text %></p> 
-        <button class='btnEditComment' onclick='editComment(this)'>Edit</button>
+    <div data_comment_id='<%= comments[i].id %>' class='commentCard card mt-3'>
+        <div class='card-header p-0 d-flex flex-row'>
+            <h6 class='card-title m-0 text-center w-100 mt-2'><%= comments[i].date.toDateString() %> </h6>
+            <button class='btn btn-outline-dark btnEditComment' onclick='editComment(this)'><i class="fas fa-edit"></i></button>
+        </div>
+        <div class='card-body p-2 pb-0 commentBody'>
+            <p><%=comments[i].text %></p>
+        </div>         
     </div>
     <% } %>
-    <div data_comment_id='0' class='commentCard'>
-        <label>Add a comment:</label><br>
-        <textarea class='commentArea'></textarea><br>
-        <button class='btnAddComment' onclick='saveComment(this)'>Save</button>
-        <button class='btnClrComment' onclick='closeComment(this, null)'>Cancel</button>
+    <div data_comment_id='0' class='commentCard card mt-3'>
+        <div class='card-header p-0 d-flex flex-row'>
+            <label class='card-title text-center h6 w-100 mt-2'>Add new comment:</label>
+        </div>
+        <div class='commentBody card-body p-2 '>
+            <textarea class='commentArea w-100 h-100'></textarea>
+        </div>
+        <div id='saveDiv' class='row m-0 pb-2'>
+            <div class='col-2'></div>
+            <button class='btnAddComment col-3 mt-0 btn btn-outline-dark' onclick='saveComment(this)'>Save</button>
+            <div class='col-2'></div>
+            <button class='btnClrComment col-3 mt-0 btn btn-outline-dark' onclick='closeComment(this, null)'>Cancel</button>
+            <div class='col-2'></div>
+        </div>
     </div>
+</div>

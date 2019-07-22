@@ -1,36 +1,34 @@
-  <h3>Sign up for ThoughtJot</h3>
-  <form id='signup'>
+<div class='col-sm-6 row mainSection p-3'>  
+  <form id='signup'class='card col-12'>
+    <div class='card-header p-0 mb-2'>
+      <h4 class='card-title w-100 text-center m-1'>Sign Up</h4>
+    </div>
     <fieldset>
-      <legend>Enter your information:</legend>
+      <legend class='w-100 text-center h6'>Please Enter Your Info:</legend>
 
-      <label data_defaultTag='Username' for="username">Username</label> <br />
-      <input type="text" name="username"> <br /> <br />
-
-      <label data_defaultTag='Email' for="email">Email</label> <br />
-      <input type="email" name="email"> <br /> <br />
-
-      <label data_defaultTag='First Name' for="fname">First Name</label> <br />
-      <input type="text" name="fname"> <br /> <br />
-
-      <label data_defaultTag='Last Name' for="lname">Last Name</label> <br />
-      <input type="text" name="lname"> <br /> <br />
-
-      <label data_defaultTag='Password' for="password">Password</label> <br />
-      <input type="password" name="password"> <br /> <br />
-
-      <label data_defaultTag='Recovery Question' for="question">Recovery Question</label> <br />
-      <input type="text" name="question"> <br /> <br />
-
-      <label data_defaultTag='Recovery Answer' for="answer">Recovery Answer</label> <br />
-      <input type="text" name="answer"> <br /> <br />
-      
-      <h4 id='formMessage'></h4>
-
-      <div id="formButtons">
-        <input type="button" onclick='createAccount(this)' value="Sign Up">
-        <input type="reset" value="Cancel">
+      <label class='p-0 w-100 mb-1 mt-2' data_defaultTag='Username' for="username">Username</label> <br />
+      <input class='w-100 m-0 form-control' type="text" name="username"> 
+      <label class='p-0 w-100 mb-1 mt-2' data_defaultTag='Email' for="email">Email</label> <br />
+      <input class='w-100 m-0 form-control' type="email" name="email"> 
+      <label class='p-0 w-100 mb-1 mt-2' data_defaultTag='First Name' for="fname">First Name</label> <br />
+      <input class='w-100 m-0 form-control' type="text" name="fname"> 
+      <label class='p-0 w-100 mb-1 mt-2' data_defaultTag='Last Name' for="lname">Last Name</label> <br />
+      <input class='w-100 m-0 form-control' type="text" name="lname"> 
+      <label class='p-0 w-100 mb-1 mt-2' data_defaultTag='Password' for="password">Password</label> <br />
+      <input class='w-100 m-0 form-control' type="password" name="password"> 
+      <label class='p-0 w-100 mb-1 mt-2' data_defaultTag='Recovery Question' for="question">Recovery Question</label> <br />
+      <input class='w-100 m-0 form-control' type="text" name="question"> 
+      <label class='p-0 w-100 mb-1 mt-2' data_defaultTag='Recovery Answer' for="answer">Recovery Answer</label> <br />
+      <input class='w-100 m-0 form-control' type="text" name="answer"><br>      
+      <div id='formMessage'></div>
+      <div id="formButtons" class='col-12'>
+        <div class='row'>
+          <input class='btn btn-outline-dark col-6' type="button" onclick='createAccount(this)' value="Sign Up">
+          <input class='btn btn-outline-dark col-6' type="reset" onclick='createAccount(this)' value="Cancel">
+        </div>
       </div> 
     </fieldset>
     <br />   
-    <p>Already have an account? <span class='spanLink' onclick='getLoginScreen()'>Log in here!</span></p>
+    <p>Already have an account?<br><span class='spanLink btn btn-link'  onclick='getLoginScreen()'>Log in here!</span></p>
   </form>
+</div>

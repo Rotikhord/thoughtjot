@@ -17,6 +17,16 @@ function User(){
     this.security_answer;
   }
 
+ /****************************************************************
+   * Queries the database for a user using an id
+   ****************************************************************/
+  async function getUserById(id){
+    var sql = "SELECT user_pk, user_username, user_fname, user_lname, user_email, user_hash, user_signup, user_username, user_last_signin, user_security_question, user_security_answer FROM users WHERE user_pk=$1::int";
+    var params = [id]; 
+    var results = await pool.query(sql, params);
+    return parseUserfromDB(results.rows[0]);
+  }
+
   /****************************************************************
    * Queries the database for a user using an email
    ****************************************************************/
@@ -78,6 +88,7 @@ async function insertNewUser(user){
   module.exports = {
       User: User,
       getUserByEmail: getUserByEmail,
+      getUserById: getUserById,
       getUserByUsername: getUserByUsername,
       insertNewUser: insertNewUser
   };

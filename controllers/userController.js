@@ -16,15 +16,34 @@ async function login(request, response){
         var user = await userModel.getUserByUsername(request.body.username);
     }
     //Compare passwords
-    if (await verifyPassword(request.body.password, user.hash)){
+    if (user != null && await verifyPassword(request.body.password, user.hash)){
         //Successful Sign in
         sessionKey = await sessionController.createSession(user.pk);
         response.send({result: 'success', message:'Sign-In Successful', sessionKey: sessionKey, user: user});
     } else {
         //un-Successful Sign In
+        console.log('UNSUCCESSFUL');
         response.send({result: 'failed', message: "Invalid username or password"})
     }
+}
 
+/****************************************************************
+ * Returns Session & User information for a verified session. 
+ ****************************************************************/
+async function verifySession(request, response){
+    if (debug){console.log("verifySession() -> Called");}
+    //Logic to determine whether to search for user by username or email.
+    var user = await userModel.getUserById(request.body.key.id);
+    console.log(user)
+    if (user != null && user!=undefined){
+        //Successful Sign in
+        sessionKey = request.body.key;
+        response.send({result: 'success', message:'Sign-In Successful', sessionKey: sessionKey, user: user});
+    } else {
+        //un-Successful Sign In
+        console.log('UNSUCCESSFUL');
+        response.send({result: 'failed', message: "Session Expired"})
+    }
 }
 
 /****************************************************************
@@ -84,6 +103,7 @@ async function verifyPassword(password, hash){
 
 
   module.exports = {
+      verifySession:verifySession,
       login: login,
       signup: signup
   };

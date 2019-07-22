@@ -39,6 +39,7 @@ app.post('/saveJot', authenticate, jotController.saveJot);
 app.post('/saveComment', authenticate, commentController.saveComment);
 app.post('/login', userController.login);
 app.post('/signup', userController.signup);
+app.post('/verifySession', authenticate, userController.verifySession)
 
 
 //get home by default. 
@@ -55,13 +56,13 @@ app.listen(port, function () {
  ***********************************************************/
 async function authenticate(request, response, next){
   if (debug){console.log("authenticate() -> Called");}
-  //console.log(request);
+  console.log(request);
   if (request.method == 'POST'){
     var key = request.body.key;
-    console.log(request.body);
+    console.log(JSON.stringify(request.body.key));
   } else {
     var key = request.query.key;
-    console.log(request.query);
+    console.log(request.query.key);
   }
   if (await sessionController.verifySession(key.id, key.key) == true){
     if (debug){console.log("authenticate() -> Success");}

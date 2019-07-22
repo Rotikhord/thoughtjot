@@ -12,10 +12,10 @@ var user;
  * This function handles the initial loading of the page
  **********************************************/
 function onLoad(){
-    sessionKey = localStorage.getItem('sessionKey');
+    sessionKey = JSON.parse(localStorage.getItem('sessionKey'));
     if (sessionKey == null || sessionKey == undefined){
         getLoginScreen();
-    } else {
+    } else {        
         authenticateSession();
     }
 }
@@ -24,8 +24,14 @@ function onLoad(){
  * This function queries to server and checks to see if session if valid
  ***************************************************************/
 function authenticateSession(){
-    //TODO 
-    getLoginScreen();
+
+    $.post('/verifySession', {key: sessionKey}, function(data, status){
+        if (data.result != 'success'){
+            getLoginScreen();
+        } else {
+            initializeSession(data);
+        }
+    });
 }
 
 /***************************************************************
@@ -60,33 +66,46 @@ function postForm(formID, callback){
  * Uses an AJAX post request to login to the application
  **************************************************************/
 function signIn(element){
-    postForm($(element).closest('form').attr('id'), function(data, status){
-        if (data.result != 'success'){
-            $('#formMessage').text(data.message);
-        } else {
+    if (validateForm(element) && $(element).val() != 'Cancel'){
+        postForm($(element).closest('form').attr('id'), function(data, status){
+            console.log(data);
+            if (data.result != 'success'){
+                $('#formMessage').html(data.message);
+                $('#formMessage').addClass('alert alert-danger pl-2')
+            } else {
+                console.log('test')
             initializeSession(data);
-        }
-    });
+            }
+        });
+    }
 }
 
 /***************************************************************
- * Uses an AJAX post request to sign up for the application
+ * Validates a form and ensures everything is filled in
  **************************************************************/
-function createAccount(element){
+function validateForm(element){
     var field = $('fieldset');
     var isValid = true;
     field.children('input').each(function() {
         var label = $(this).prev().prev();
-        if($(this).val() == ''){
+        if($(this).val() == '' && $(element).val() != 'Cancel'){
             isValid = false;
             label.text(label.attr('data_defaultTag') +  ' is required.');
-            $(this).prev().prev().css('color', 'red');
+            label.addClass('alert alert-danger pl-2')
         } else {
             label.text(label.attr('data_defaultTag'));
+            label.removeClass('alert alert-danger pl-2')
             $(this).prev().prev().css('color', 'black');
         }
     });
-    if (isValid){
+    return isValid;
+}
+/***************************************************************
+ * Uses an AJAX post request to sign up for the application
+ **************************************************************/
+function createAccount(element){
+
+    if (validateForm(element) && $(element).val() != 'Cancel'){
         postForm($(element).closest('form').attr('id'), function(data, status){
             if (data.result != 'success'){
                 $('#formMessage').text(data.message);
@@ -97,20 +116,38 @@ function createAccount(element){
     }
 }
 
+/**************************************************************
+ * Signs out of the application and removes local session data
+ **************************************************************/
+function signOut(){
+    sessionKey = ''
+    localStorage.removeItem('sessionKey');
+    clearInterval(intervalFunction);
+    user = '';
+
+    //Set everything to defaults
+    $('#welcomeMessage').html('<i class="fas fa-user-circle"></i>');
+    $('#headerLogo').toggleClass('col-12 col-md-8 col-sm-7 col-6');
+    //Show navbar & signout options
+    $('#jotNavBar').hide();
+    $('#sidebarLeft').html('');
+
+    getLoginScreen();
+}
 
 /**************************************************************
  * Initializes a local session. 
  **************************************************************/
 function initializeSession(data){
     sessionKey = data.sessionKey;
-    localStorage.setItem('sessionKey', sessionKey);
+    localStorage.setItem('sessionKey', JSON.stringify(sessionKey));
     user = data.user;
 
     //Display Welcome Message
-    $('#welcomeMessage').text('Welcome ' + user.fname);
-
+    $('#welcomeMessage').html('<i class="fas fa-user-circle"></i> ' + user.fname + ' ' + user.lname);
+    $('#headerLogo').toggleClass('col-12 col-md-8 col-sm-7 col-6');
     //Show navbar & signout options
-    $('#jotNavBar, #headerWelcome').show();
+    $('#jotNavBar').show();
 
     //Get new entry screen by default
     getNewEntryScreen();
@@ -308,17 +345,18 @@ function getListJot(element){
  * Creates a post request to store comment on server
  ****************************************************************/
 function saveComment(element){
-    var parent = $(element).parent(".commentCard");
+    var parent = $(element).closest(".commentCard");
+    console.log(parent);
+    console.log(parent.children('.commentBody').eq(0));
+    console.log(parent.children('.commentBody').eq(0).children('.commentArea').eq(0));
     var comment = {};
-    comment.text = parent.children('.commentArea').eq(0).val();
+    comment.text = parent.children('.commentBody').eq(0).children('.commentArea').eq(0).val();
     comment.id = parent.attr('data_comment_id');
     comment.jotID = $('#jotArea').attr('data_jot_id');
     console.log(comment);
     if (comment.text.length > 0){
         $.post('/saveComment', {key: sessionKey, comment: comment}, function(data, status){ 
             closeComment(element, data);
-            //displayJot(data);
-            //getFilteredJots();
         }).fail(function(jqXHR) {
             console.log(jqXHR.status);
             //TODO - If 401 - redirect to login 
@@ -331,16 +369,18 @@ function saveComment(element){
  * This cancels the comment edits.
  ****************************************************************/
 function closeComment(element, newComment){
-    var parent = $(element).parent(".commentCard");
+    var parent = $(element).closest(".commentCard");
     var parentID = parent.attr('data_comment_id');
     if (parentID == '0'){
-        parent.children('.commentArea').eq(0).val('');
-        if (newComment != null){
-            parent.before("<div data_comment_id='" + newComment.id + "' class='commentCard'></div>");
+        parent.children('.commentBody').eq(0).children('.commentArea').eq(0).val('');
+        if (newComment != null){            
+            parent.before("<div data_comment_id='" + newComment.id + "' class='commentCard card mt-3'></div>");
             var display = parent.prev();
-            display.append("<h6 class='commentHeader'>" + new Date(newComment.date).toDateString() + "</h6>")
-            display.append("<p>" + newComment.text + "</p>")
-            display.append("<button class='btnEditComment' onclick='editComment(this)'>Edit</button>")
+            var htmlString = "<div class='card-header p-0 d-flex flex-row'>";
+            htmlString += "<h6 class='card-title m-0 text-center w-100 mt-2'> " + new Date(newComment.date).toDateString() + "</h6>";
+            htmlString += "<button class='btn btn-outline-dark btnEditComment' onclick='editComment(this)'><i class='fas fa-edit'></i></button></div>";
+            htmlString += "<div class='card-body p-2 pb-0 commentBody'><p>" + newComment.text + "</p></div";
+            display.append(htmlString);
         }
     } else {
         parent.empty();
@@ -348,7 +388,7 @@ function closeComment(element, newComment){
         $('.commentCard').each(function(){
             if ($(this).attr('data_comment_id') == parentID){
                 if (newComment != null){
-                    $(this).children('p').eq(0).text(newComment.text);
+                    $(this).children('.commentBody').eq(0).children('p').eq(0).text(newComment.text);
                 }
                 $(this).show();
             }
@@ -360,15 +400,16 @@ function closeComment(element, newComment){
  * This cancels the comment edits.
  ****************************************************************/
 function editComment(element){
-    var parent = $(element).parent(".commentCard");
-    var text = parent.children('p').eq(0).text();
+    var parent = $(element).closest(".commentCard");
+    var text = parent.children('.commentBody').eq(0).children('p').eq(0).text();
     var id = parent.attr('data_comment_id');
     parent.hide();
-    parent.before("<div data_comment_id='" + id + "' class='commentCard'></div>");
+    parent.before("<div data_comment_id='" + id + "' class='commentCard card mt-3'></div>");
     var editable = parent.prev();
-    editable.append('<label>Add a comment:</label><br>')
-    editable.append("<textarea class='commentArea'>" + text + "</textarea><br></br>")
-    editable.append("<button class='btnAddComment' onclick='saveComment(this)'>Save</button>")
-    editable.append("<button class='btnClrComment' onclick='closeComment(this, null)'>Cancel</button>")
-   
+    var htmlString = "<div class='card-header p-0 d-flex flex-row'><label class='card-title text-center h6 w-100 mt-2'>Edit Comment:</label></div>";
+    htmlString += "<div class='commentBody card-body p-2 '><textarea class='commentArea w-100 h-100'>" + text + "</textarea></div>";
+    htmlString += "<div id='saveDiv' class='row m-0 pb-2'><div class='col-2'></div>";
+    htmlString += "<button class='btnAddComment col-3 mt-0 btn btn-outline-dark' onclick='saveComment(this)'>Save</button><div class='col-2'></div>";
+    htmlString += "<button class='btnClrComment col-3 mt-0 btn btn-outline-dark' onclick='closeComment(this, null)'>Cancel</button><div class='col-2'></div></div>";
+    editable.append(htmlString);
 }
