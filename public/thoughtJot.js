@@ -188,6 +188,19 @@ function editJot(){
 }
 
 /***************************************************************
+ * This function cancels the requested edit. 
+ ***************************************************************/
+function cancelJot(){
+    var jotID = data = $('#jotArea').attr('data-jot-id');
+    console.log(jotID);
+    if (jotID == 0){
+        $('#jotArea').val('');
+    } else {
+        displayJot(jotID);
+    }
+}
+
+/***************************************************************
  * This function queries the server for the add new entry page
  ***************************************************************/
 function displayJot(jotID){
@@ -222,7 +235,7 @@ function getSignUpScreen(){
  ****************************************************************/
 function autoSave(){
     var jot = $('#jotArea').val();
-    if (jot.length > 0 && lastSavedJot != jot){
+    if (lastSavedJot != jot){
         console.log('auto-saving');
         lastSavedJot = jot;
         $.post('/autoSaveJot', {jot: jot, key: sessionKey});// , function(data, status) { console.log('Status: ' + status); });
