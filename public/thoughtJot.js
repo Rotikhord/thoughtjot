@@ -11,12 +11,16 @@ var user;
 /**********************************************
  * This function handles the initial loading of the page
  **********************************************/
-function onLoad(){
-    sessionKey = JSON.parse(localStorage.getItem('sessionKey'));
-    if (sessionKey == null || sessionKey == undefined){
+function onLoad(){    
+    try{
+        sessionKey = JSON.parse(localStorage.getItem('sessionKey'));
+        if (sessionKey == null || sessionKey == undefined){
+            getLoginScreen();
+        } else {        
+            authenticateSession();
+        }
+    } catch {
         getLoginScreen();
-    } else {        
-        authenticateSession();
     }
 }
 
@@ -24,7 +28,6 @@ function onLoad(){
  * This function queries to server and checks to see if session if valid
  ***************************************************************/
 function authenticateSession(){
-
     $.post('/verifySession', {key: sessionKey}, function(data, status){
         if (data.result != 'success'){
             getLoginScreen();
