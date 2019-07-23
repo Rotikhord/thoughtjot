@@ -61,12 +61,18 @@ async function authenticate(request, response, next){
   } else {
     var key = request.query.key;
   }
-  if (await sessionController.verifySession(key.id, key.key) == true){
-    if (debug){console.log("authenticate() -> Success");}
-    next();
-  } else {
-    if (debug){console.log("authenticate() -> Failed");}
-    response.status(401).end();
+  try {
+    if (await sessionController.verifySession(key.id, key.key) == true){
+      if (debug){console.log("authenticate() -> Success");}
+      next();
+    } else {
+      if (debug){console.log("authenticate() -> Failed");}
+      response.status(401).end();
+      response.send();    
+  }
+  } catch (err) {
+    console.log("authenicate() - " + err.message);
+    response.status(500).end();
     response.send();    
   }
 }
