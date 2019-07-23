@@ -23,7 +23,7 @@ async function createSession(userID){
    ****************************************************************/
 async function verifySession(userID, clientKey){
     if (debug){console.log("verifySession() -> Called");}
-    const HOUR = 1000; //1 hour in ms.  
+    const HOUR = 1000 * 60 * 60; //1 hour in ms.  
     serverKey = await sessionModel.getSessionKey(userID);
     if (serverKey == null || serverKey == undefined || clientKey != serverKey.key){
         if (debug){console.log("verifySession() -> Returning FALSE");}
@@ -31,12 +31,6 @@ async function verifySession(userID, clientKey){
     } else if (((new Date) - serverKey.date) > HOUR) {
         sessionModel.deleteSessionKey(userID);
         if (debug){console.log("verifySession() -> Returning FALSE");}
-        
-        console.log((new Date) - serverKey.date);
-        console.log((new Date));
-        console.log(serverKey.date);
-        console.log('minutes = ' + ((new Date - serverKey.date) /1000/60));
-        console.log('hours = ' + ((new Date - serverKey.date) /60/1000/60));
         return false;
     } else {
         if (debug){console.log("verifySession() -> Returning TRUE");}

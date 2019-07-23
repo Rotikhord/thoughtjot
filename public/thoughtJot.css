@@ -31,6 +31,7 @@ html, body{
     transition-duration: .5s;
 }
 .btn {
+    font-weight: bold;
     background-color: #FBC6A5;
     border: 1px solid #9F3D00;
     color: black;
