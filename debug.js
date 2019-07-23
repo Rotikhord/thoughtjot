@@ -1,2 +1,2 @@
-var debug = true;
+var debug = false;
 module.exports = debug;

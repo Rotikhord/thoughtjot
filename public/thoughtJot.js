@@ -34,7 +34,10 @@ function authenticateSession(){
         } else {
             initializeSession(data);
         }
-    });
+    }).fail(function(jqXHR) {
+        console.log("Error code " + jqXHR.status + ": Redirecting to login screen.");
+        getLoginScreen();
+    }); 
 }
 
 /***************************************************************
@@ -212,6 +215,7 @@ function displayJot(jotID){
         //TODO - if 404 - display not found
         //TODO - if 400 - display error message 
     }); 
+    
 }
 
 

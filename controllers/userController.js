@@ -36,12 +36,9 @@ async function verifySession(request, response){
     var user = await userModel.getUserById(request.body.key.id);
     console.log(user)
     if (user != null && user!=undefined){
-        //Successful Sign in
         sessionKey = request.body.key;
         response.send({result: 'success', message:'Sign-In Successful', sessionKey: sessionKey, user: user});
     } else {
-        //un-Successful Sign In
-        console.log('UNSUCCESSFUL');
         response.send({result: 'failed', message: "Session Expired"})
     }
 }
@@ -67,8 +64,7 @@ function parseUserFromRequest(data){
  ****************************************************************/
 async function signup(request, response){
     if (debug){console.log("signup() -> Called");}
-    var user = parseUserFromRequest(request.body);    
-    console.log(user);
+    var user = parseUserFromRequest(request.body);   
 
     //verify that the username or passwords don't already exist.
     var emailUser = await userModel.getUserByEmail(user.email);
@@ -78,15 +74,11 @@ async function signup(request, response){
         return;
     } else {
         user.hash = await bcrypt.hash(user.hash, 10);
-        console.log('CREATE USER');
-        console.log(user.hash);
         user = await userModel.insertNewUser(user);
     }
     
     //Respond to client
     if (user != null){
-        console.log(user);
-        console.log('USERPK = ' + user.pk);
         sessionKey = await sessionController.createSession(user.pk);
         response.status(201).send({result: 'success', sessionKey: sessionKey, user: user});
     } else {

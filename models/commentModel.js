@@ -62,7 +62,6 @@ async function getAllComments(jotID){
   for (var i = 0; i < results.rows.length; i++){
     comments.push(parseCommentFromDB(results.rows[i]));
   }
-  console.log(comments);
   return comments;
 }
 

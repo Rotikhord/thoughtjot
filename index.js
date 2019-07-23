@@ -56,21 +56,19 @@ app.listen(port, function () {
  ***********************************************************/
 async function authenticate(request, response, next){
   if (debug){console.log("authenticate() -> Called");}
-  console.log(request);
   if (request.method == 'POST'){
     var key = request.body.key;
-    console.log(JSON.stringify(request.body.key));
   } else {
     var key = request.query.key;
-    console.log(request.query.key);
   }
   if (await sessionController.verifySession(key.id, key.key) == true){
     if (debug){console.log("authenticate() -> Success");}
     next();
   } else {
     if (debug){console.log("authenticate() -> Failed");}
-    response.status(401).end(jotID);
-  }    
+    response.status(401).end();
+    response.send();    
+  }
 }
 
 /************************************************************

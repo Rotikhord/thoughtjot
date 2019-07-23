@@ -52,7 +52,6 @@ async function getJotsByTag(userID, tagID){
   for (var i = 0; i < results.rows.length; i++){
     jots.push(parseJotsFromDB(results.rows[i]));
   }
-  console.log(jots);
   return jots;
 }
 
@@ -79,7 +78,6 @@ async function getAllJots(userID){
   for (var i = 0; i < results.rows.length; i++){
     jots.push(parseJotsFromDB(results.rows[i]));
   }
-  console.log(jots);
   return jots;
 }
 
