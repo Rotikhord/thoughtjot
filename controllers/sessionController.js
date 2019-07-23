@@ -25,12 +25,12 @@ async function verifySession(userID, clientKey){
     if (debug){console.log("verifySession() -> Called");}
     const HOUR = 1000; //1 hour in ms.  
     serverKey = await sessionModel.getSessionKey(userID);
-    console.log((new Date) - serverKey.date);
-    console.log((new Date));
-    console.log(serverKey.date);
-    console.log('minutes = ' + ((new Date - serverKey.date) /1000/60));
-    console.log('hours = ' + ((new Date - serverKey.date) /60/1000/60));
     if (serverKey == null || serverKey == undefined || clientKey != serverKey.key){
+        console.log((new Date) - serverKey.date);
+        console.log((new Date));
+        console.log(serverKey.date);
+        console.log('minutes = ' + ((new Date - serverKey.date) /1000/60));
+        console.log('hours = ' + ((new Date - serverKey.date) /60/1000/60));
         if (debug){console.log("verifySession() -> Returning FALSE");}
         return false;
     } else if (((new Date) - serverKey.date) > HOUR) {
